@@ -6,7 +6,7 @@ const obj = Object.freeze({
     bool : false,
     undef : undefined,
 });
-const nested = Object.freeze({
+const nested = deepFreeze({
     arr : [4, undefined, '2'],
     obj : {
         str : "Hello",
@@ -14,3 +14,16 @@ const nested = Object.freeze({
         bool : false,
     },
 });
+
+function deepFreeze(object) {
+    Object.freeze(object);
+    Object.keys(object).forEach(key => {
+        if (typeof object[key] === 'object' && object[key]!== null) {
+            deepFreeze(object[key]);
+        }
+    });
+    return object;
+}
+
+// console.log(nested.obj.update = 5)
+// console.log(nested)
