@@ -1,7 +1,7 @@
 // const is = {};
 
 // Add fuction properties to is object to check value type
-is.num = (value) => typeof value === 'number' && !isNaN(value) && value !== NaN;
+is.num = (value) => typeof value === 'number';
 is.nan = (value) => isNaN(value);
 is.str = (value) => typeof value === 'string';
 is.bool = (value) => typeof value === 'boolean';
@@ -14,7 +14,7 @@ is.truthy = (value) => !!value; // Double negation to convert to boolean
 is.falsy = (value) => !value;   //Direct negation to check falsy
 
 
-console.log(is.num(5)); // true
+console.log(is.num(NaN)); // true
 console.log(is.num('ciao')); // false
 console.log(is.nan(NaN)); // true
 console.log(is.str('hello')); // true
