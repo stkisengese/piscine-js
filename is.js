@@ -1,8 +1,8 @@
-// const is = {};
+const is = {};
 
 // Add fuction properties to is object to check value type
 is.num = (value) => typeof value === 'number';
-is.nan = (value) => isNaN(value);
+is.nan = (value) => typeof value === 'number' && isNaN(value);
 is.str = (value) => typeof value === 'string';
 is.bool = (value) => typeof value === 'boolean';
 is.obj = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
