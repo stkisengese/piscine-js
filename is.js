@@ -1,4 +1,4 @@
-const is = {};
+// const is = {};
 
 // Add fuction properties to is object to check value type
 is.num = (value) => typeof value === 'number';
@@ -7,8 +7,8 @@ is.str = (value) => typeof value === 'string';
 is.bool = (value) => typeof value === 'boolean';
 is.obj = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
 is.fun = (value) => typeof value === 'function';
-is.undef = (value) => value === undefined;
-is.def = (value) => typeof value !== undefined;
+is.undef = (value) => value === 'undefined';
+is.def = (value) => typeof value !== 'undefined' && value !== null;
 is.arr = (value) => Array.isArray(value);
 is.truthy = (value) => !!value; // Double negation to convert to boolean
 is.falsy = (value) => !value;   //Direct negation to check falsy
