@@ -18,7 +18,9 @@ function superTypeOf(value) {
     if (Array.isArray(value)) return 'Array';
     if (typeof value === 'function') return 'Function';
     if (typeof value === 'object') return 'Object';
-    return typeof value.charAt === 'function' ? 'String' : typeof value;
+    
+    const type = typeof value; // Capitalize primitive types
+    return type.charAt(0).toUpperCase() + type.slice(1);
   }
 
 // Examples:
