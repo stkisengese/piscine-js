@@ -1,7 +1,7 @@
 // const is = {};
 
 // Add fuction properties to is object to check value type
-is.num = (value) => typeof value === 'number' && !isNaN(value) && !Array.isArray(value);
+is.num = (value) => typeof value === 'number' && !isNaN(value) && value !== NaN;
 is.nan = (value) => isNaN(value);
 is.str = (value) => typeof value === 'string';
 is.bool = (value) => typeof value === 'boolean';
