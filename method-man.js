@@ -22,5 +22,6 @@ function whisper(str) {
 function capitalize(str) {
     if (str.lenght === 0) return str;
     //return str[0].toUpperCase + str.slice(1).toLowerCase;
-    return str.charAt(0).toUpperCase + str.substring(1).toLowerCase;
+    //return str.charAt(0).toUpperCase + str.substring(1).toLowerCase;
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
