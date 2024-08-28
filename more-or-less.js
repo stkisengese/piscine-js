@@ -7,13 +7,12 @@
 
 // All the functions must return the result of the operations specified above.
 
-const more = (n) => n+1;
-const less = (n) => n-1;
+const more = (n) => n + 1;
+const less = (n) => n - 1;
 const add = (a, b) => a + b;
 const sub = (a, b) => a - b;
 
-
-// console.log(more(4));
-// console.log(less(5));
-// console.log(add(3, 4));
-// console.log(sub(7, 2));
+console.log(more(4));
+console.log(less(5));
+console.log(add(3, 4));
+console.log(sub(7, 2));

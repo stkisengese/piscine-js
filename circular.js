@@ -1,7 +1,7 @@
 const circular = {
-    circular: null,
+  circular: null,
 };
 
 circular.circular = circular; // This will create a circular reference
 
-// console.log(circular);
+console.log(circular);
