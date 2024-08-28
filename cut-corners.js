@@ -1,12 +1,12 @@
 function modulo(a, b) {
-    // if (b === 0) return "Modulo zero";
-    // if (a < 0) return -modulo(-a, b);
-    // if (b < 0) return modulo(a, -b);
-  
-    if (a < b) return a;
-    return modulo(a - b, b);
+  // if (b === 0) throw new Error("Modulo by zero");
+  let remainder = Math.abs(a);
+//   const divisor = Math.abs(b);
+  while (remainder >= 1) {
+    remainder -= 1;
   }
-
+  return a < 0 ? -remainder : remainder;
+}
 // Custom round function
 function round(num) {
   return floor(num + 0.5);
