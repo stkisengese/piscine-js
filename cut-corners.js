@@ -1,7 +1,7 @@
 function modulo(a, b) {
-    if (b === 0) return "Modulo zero";
-    if (a < 0) return -modulo(-a, b);
-    if (b < 0) return modulo(a, -b);
+    // if (b === 0) return "Modulo zero";
+    // if (a < 0) return -modulo(-a, b);
+    // if (b < 0) return modulo(a, -b);
   
     if (a < b) return a;
     return modulo(a - b, b);
