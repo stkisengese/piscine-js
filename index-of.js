@@ -27,35 +27,3 @@ function lastIndexOf(array, value, fromIndex = array.length - 1) {
 
   return -1;
 }
-
-const array1 = [1, 2, 3];
-
-console.log(array1.includes(2));
-// Expected output: true
-
-const pets = ["cat", "dog", "bat"];
-
-console.log(pets.includes("cat"));
-// Expected output: true
-
-console.log(pets.includes("at"));
-// Expected output: false
-const beasts = ["ant", "bison", "camel", "duck", "bison"];
-
-console.log(beasts.indexOf("bison"));
-// Expected output: 1
-
-// Start from index 2
-console.log(beasts.indexOf("bison", 2));
-// Expected output: 4
-
-console.log(beasts.indexOf("giraffe"));
-// Expected output: -1
-
-const animals = ["Dodo", "Tiger", "Penguin", "Dodo"];
-
-console.log(animals.lastIndexOf("Dodo"));
-// Expected output: 3
-
-console.log(animals.lastIndexOf("Tiger"));
-// Expected output: 1
