@@ -85,6 +85,10 @@ const countTo10 = (count) => {
 
 countTo10(0); // we need to call it to start the recursion with an initial value
 
+// const count6 = (count) => (count < 66 ? count6(count + 1) : count); //
+
+// console.log("recursive six", count6(0)); // 5!
+
 // As you can see, looping this way we were able to remove the need for mutable
 // variables (let)
 
