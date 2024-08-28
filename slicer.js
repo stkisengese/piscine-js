@@ -3,23 +3,23 @@ an array into a new array object selected from start to end (end not included) w
 start and end represent the index of items in that array.
 */
 
-function slice(array, start = 0, end = array.length) {
-  let newArray = [];
-  if (start < 0) start += array.length;
-  if (end < 0) end += array.length;
-  
+function slice(input, start = 0, end = input.length) {
+  if (start < 0) start += input.length;
+  if (end < 0) end += input.length;
+
+  let result = input instanceof Array ? [] : "";
   for (let i = start; i < end; i++) {
-    newArray.push(array[i]);
+    result = input instanceof Array ? [...result, input[i]] : result + input[i];
   }
-  return newArray;
+  return result;
 }
 
-const animals = ['ant', 'bison', 'camel', 'duck', 'elephant'];
+const animals = ["ant", "bison", "camel", "duck", "elephant"];
 
 console.log(slice(animals, 2));
 // Expected output: Array ["camel", "duck", "elephant"]
 
-console.log(slice(animals, 2, 4));
+console.log(slice("animals", 2, 7));
 // Expected output: Array ["camel", "duck"]
 
 console.log(slice(animals, 1, 5));
