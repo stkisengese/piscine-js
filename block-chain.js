@@ -11,8 +11,7 @@
 //     prev: the previous block.
 //     chain: a function that accepts data as an argument, and creates the next block with it.
 
-
-function blockChain(data, prev = { index: 0, hash:'0'}) {
+function blockChain(data, prev = { index: 0, hash: "0" }) {
   const block = {
     index: prev.index + 1,
     data: data,
@@ -26,13 +25,13 @@ function blockChain(data, prev = { index: 0, hash:'0'}) {
   block.chain = (newData) => blockChain(newData, block);
 
   return block;
-};
+}
 
-//provided code
-const hashCode = (str) =>
-  (
-    [...str].reduce((h, c) => (h = (h << 5) - h + c.charCodeAt(0)) & h, 0) >>> 0
-  ).toString(36);
+// //provided code
+// const hashCode = (str) =>
+//   (
+//     [...str].reduce((h, c) => (h = (h << 5) - h + c.charCodeAt(0)) & h, 0) >>> 0
+//   ).toString(36);
 
 // Example Usage
 const first = blockChain({ a: 1 });
