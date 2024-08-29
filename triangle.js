@@ -1,10 +1,14 @@
 function triangle(char, height) {
-    let i = 1;
-    while (i < height) {
-        console.log(char.repeat(i));
-        i++;
+  let i = 1;
+  let result = "";
+  while (i <= height) {
+    result += char.repeat(i);
+    if (i < height) {
+      result += "\n";
     }
-    return char.repeat(i);
+    i++;
+  }
+  return result;
 }
 
-console.log(triangle("H", 5));
+console.log(triangle("#", 5));
