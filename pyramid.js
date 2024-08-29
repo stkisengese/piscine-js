@@ -1,12 +1,12 @@
 function pyramid(char, height) {
   let result = "";
-  let i = 1;
+  let i = char.length;
   let j = 1;
-  while (i <= height) {
-    result += " ".repeat(height - i) + char.repeat(j);
-    i++;
+  while (i <= height * char.length) {
+    result += " ".repeat(height * char.length - i) + char.repeat(j);
+    i += char.length;
     j += 2;
-    if (i <= height) {
+    if (i <= height * char.length) {
       result += "\n";
     }
   }
@@ -14,4 +14,4 @@ function pyramid(char, height) {
 }
 
 console.log(pyramid("#", 5));
-console.log(pyramid("*", 7));
+console.log(pyramid("{}", 12));
