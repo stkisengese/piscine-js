@@ -1,25 +1,20 @@
 // const add4 = '+4'
 // const mul2 = '*2'
 
-function findExpression(number, current = 1, expression = '1') {
-  // Base cases
-  if (current === number) {
-    return expression;
+function findExpression(target) {
+  function helper(current, expression) {
+    if (current === target) {
+      return expression;
+    }
+    if (current > target) {
+      return undefined;
+    }
+    return (
+      helper(current + 4, expression + " " + add4) ||
+      helper(current * 2, expression + " " + mul2)
+    );
   }
-  if (current > number) {
-    return undefined;
-  }
-  const addResult = findExpression(number, current + 4, `${expression} ${add4}`);
-  if (addResult) {
-    return addResult;
-  }
-
-  const mulResult = findExpression(number, current * 2, `${expression} ${mul2}`);
-  if (mulResult) {
-    return mulResult;
-  }
-
-  return undefined;
+  return helper(1, "1");
 }
 
 // // Test cases
