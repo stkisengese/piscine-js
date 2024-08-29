@@ -6,6 +6,9 @@ function get(src, path) {
       return undefined;
     }
     result = result[key];
+    if (typeof result === "function") {
+      result = result();
+    }
   }
   return result;
 }
