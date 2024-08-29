@@ -3,7 +3,7 @@ function get(src, path) {
   let result = src;
   for (const key of keys) {
     if (result === undefined || !result.hasOwnProperty(key)) {
-      return "undefined";
+      return undefined;
     }
     result = result[key];
   }
