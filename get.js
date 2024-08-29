@@ -1,14 +1,9 @@
 function get(src, path) {
   const keys = path.split(".");
   let result = src;
-  for (const key of keys) {
-    if (result === undefined || !result.hasOwnProperty(key)) {
-      return undefined;
-    }
+  for (let key of keys) {
+    if (result == null) return undefined;
     result = result[key];
-    if (typeof result === "function") {
-      result = result();
-    }
   }
   return result;
 }
