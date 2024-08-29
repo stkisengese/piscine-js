@@ -10,8 +10,8 @@ function findExpression(target) {
       return undefined;
     }
     return (
-      helper(current + 4, expression + add4) ||
-      helper(current * 2, expression + mul2)
+      helper(current + 4, expression + '+4') ||
+      helper(current * 2, expression + '*2')
     );
   }
   return helper(1, "1");
