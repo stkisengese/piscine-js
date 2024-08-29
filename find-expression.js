@@ -1,5 +1,5 @@
-// const add4 = '+4';
-// const mul2 = '*2';
+const add4 = '+4';
+const mul2 = '*2';
 
 function findExpression(target) {
     function helper(current, expression) {
@@ -9,9 +9,15 @@ function findExpression(target) {
         if (current > target) {
             return undefined;
         }
-        return helper(current * 2, expression + mul2) || helper(current + 4, expression + add4);
+        return helper(current + 4, expression + add4) || helper(current * 2, expression + mul2) ;
     }
     return helper(1, '1');
 }
 
-console.log(findExpression(12)) 
+console.log(findExpression(8));  // Expected: 1 *2 *2 +4
+console.log(findExpression(14)); // Expected: 1 *2 +4 *2
+console.log(findExpression(17)); // Expected: 1 +4 *2 +4 +4
+console.log(findExpression(8));  // Expected: 1 *2
+console.log(findExpression(4));  // Expected: 1 +4
+console.log(findExpression(1));  // Expected: 1
+console.log(findExpression(23)); // Expected: undefined
