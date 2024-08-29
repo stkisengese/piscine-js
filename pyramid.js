@@ -14,4 +14,4 @@ function pyramid(char, height) {
 }
 
 console.log(pyramid("#", 5));
-console.log(pyramid("$", 7));
+console.log(pyramid("*", 7));
