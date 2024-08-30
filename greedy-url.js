@@ -1,5 +1,6 @@
 // returns all URLs present in the dataSet
 function getURL(dataSet) {
+  //const urlPattern = /(https?:\/\/)[^\s\/$.?#].[^\s]*\.[^\s]{2,}(?:\/[^\s]*)?(\?[^\s]{2,})?(?:\#[^\s]*)?/g;
   const urlPattern = /https?:\/\/[^\s]+/g;
   return dataSet.match(urlPattern) || [];
 }
