@@ -3,7 +3,9 @@ function sums(n) {
   if (n === 0 || n === 1) return result;
   function backtrack(start, remaining, path) {
     if (remaining === 0) {
-      result.push([...path]);
+        if (path.length > 1) {
+            result.push([...path]);
+        }     
       return;
     }
     for (let i = start; i <= remaining; i++) {
