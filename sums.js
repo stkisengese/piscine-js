@@ -1,6 +1,6 @@
 function sums(n) {
   let result = [];
-  if (n === 0) return result;
+  if (n === 0 || n === 1) return result;
   function backtrack(start, remaining, path) {
     if (remaining === 0) {
       result.push([...path]);
