@@ -1,5 +1,6 @@
 function ionOut(inputStr) {
-    const regex = /\b\w*tion\b/g;
+   // const regex = /\b\w*tion\b/g;
+    const regex = /\b\w*(?<=t)ion\b/g;
     const matches = inputStr.match(regex) || [];
 
     return matches.map(match => match.replace('ion', ''));
