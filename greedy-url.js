@@ -7,7 +7,7 @@ function getURL(dataSet) {
 
 // greedyQuery//returns URLs from the dataSet, with at least 3 query parameters.
 function greedyQuery(dataSet) {
-  const greedyPattern = /https?:\/\/[^\s]+\?([^&=]+=[^&=]+&){2,}[^&=]+=[^&=]+/g;
+  const greedyPattern = /(https?:\/\/[\w.]+\/?[\w-.~:/?#[\]@!$&'()*+,;=]+)\?(.+?)(?=&|=|$)/g;
   return dataSet.match(greedyPattern) || [];
 }
 
