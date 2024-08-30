@@ -18,8 +18,8 @@ function notSoGreedy(dataSet) {
   return dataSet.match(notSoGreedyPattern) || [];
 }
 
-const dataSet =
-  "qqq http:// qqqq q qqqqq https://something.com/hello qqqqqqq qhttp://example.com/hello?you=something&something=you";
-console.log("All URLs:", getURL(dataSet));
-console.log("Greedy URLs:", greedyQuery(dataSet));
-console.log("Not So Greedy URLs:", notSoGreedy(dataSet));
+// const dataSet =
+//   "qqq http:// qqqq q qqqqq https://something.com/hello qqqqqqq qhttp://example.com/hello?you=something&something=you";
+// console.log("All URLs:", getURL(dataSet));
+// console.log("Greedy URLs:", greedyQuery(dataSet));
+// console.log("Not So Greedy URLs:", notSoGreedy(dataSet));
