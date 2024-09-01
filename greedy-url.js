@@ -1,27 +1,24 @@
 function getURL(dataSet) {
-    // Regular expression to match URLs
-    const urlPattern = /https?:\/\/[^\s]+/g;
-    const urls = dataSet.match(urlPattern) || [];
-    return urls;
-  }
-  
-  function greedyQuery(dataSet) {
-    // Regular expression to match URLs with at least 3 query parameters
-    const urlPattern = /https?:\/\/[^\s?]+\?[^&]+(&[^&]+){2,}/g;
-    const urls = dataSet.match(urlPattern) || [];
-    return urls;
-  }
-  
-  function notSoGreedy(dataSet) {
-    // Regular expression to match URLs with at least 2 but not more than 3 query parameters
-    const urlPattern = /https?:\/\/[^\s?]+\?[^&]+(&[^&]+){1,2}/g;
-    const urls = dataSet.match(urlPattern) || [];
-    
-    // Further filtering out the URLs with more than 3 parameters
-    const filteredUrls = urls.filter(url => (url.match(/&/g) || []).length <= 2);
-    
-    return filteredUrls;
-  }
+  //const urlPattern = /(https?:\/\/)[^\s\/$.?#].[^\s]*\.[^\s]{2,}(?:\/[^\s]*)?(\?[^\s]{2,})?(?:\#[^\s]*)?/g;
+  const urlPattern = /https?:\/\/[^\s]+/g;
+  return dataSet.match(urlPattern) || [];
+}
+
+// greedyQuery//returns URLs from the dataSet, with at least 3 query parameters.
+function greedyQuery(dataSet) {
+  const greedyPattern =
+    /(https?:\/\/[\w.]+\/?[\w-.~:/?#[\]@!$&'()*+,;=]+)\?(.{3,})(?=&|=|$)/g;
+  //   const greedyPattern = /(https?:\/\/[\w.]+\/?[\w-.~:/?#[\]@!$&'()*+,;=]+)\?(.+?)(?=&|=|$)/g;
+  return dataSet.match(greedyPattern) || [];
+}
+
+//notSoGreedy: returns URLs from the dataSet, with at least 2, but not more then 3 query parameters.
+function notSoGreedy(dataSet) {
+  //const notSoGreedyPattern = /(https?:\/\/)[^\s\/$.?#].[^\s]*\.[^\s]{2,}(?:\/[^\s]*)?(\?[^\s]{2,})?(?:\#[^\s]*)?/g;
+  const notSoGreedyPattern =
+    /https?:\/\/[^\s]+\?([^&=]+=[^&=]+&){1,2}[^&=]+=[^&=]+/g;
+  return dataSet.match(notSoGreedyPattern) || [];
+}
 
 // const dataSet =
 //   "qqq http:// qqqq q qqqqq https://something.com/hello qqqqqqq qhttp://example.com/hello?you=something&something=you";
