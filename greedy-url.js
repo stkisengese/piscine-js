@@ -13,7 +13,7 @@ function greedyQuery(dataSet) {
 //notSoGreedy: returns URLs from the dataSet, with at least 2, but not more then 3 query parameters.
 function notSoGreedy(dataSet) {
   const notSoGreedyPattern =
-    /(https?:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s?]*)?(?:\?(?:[^&\s]+=[^&\s]+&){1,2}[^&\s]+=[^&\s]+))(?!\S)/g;
+  /https?:\/\/[^\s?]+\?([^&]+&){1,2}[^&]+/g;
   return dataSet.match(notSoGreedyPattern) || [];
 }
 
