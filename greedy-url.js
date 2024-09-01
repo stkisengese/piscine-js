@@ -1,5 +1,4 @@
 function getURL(dataSet) {
-  //const urlPattern = /(https?:\/\/)[^\s\/$.?#].[^\s]*\.[^\s]{2,}(?:\/[^\s]*)?(\?[^\s]{2,})?(?:\#[^\s]*)?/g;
   const urlPattern = /https?:\/\/[^\s]+/g;
   return dataSet.match(urlPattern) || [];
 }
@@ -7,14 +6,12 @@ function getURL(dataSet) {
 // greedyQuery//returns URLs from the dataSet, with at least 3 query parameters.
 function greedyQuery(dataSet) {
   const greedyPattern =
-    /(https?:\/\/[\w.]+\/?[\w-.~:/?#[\]@!$&'()*+,;=]+)\?(.{3,})(?=&|=|$)/g;
-  //   const greedyPattern = /(https?:\/\/[\w.]+\/?[\w-.~:/?#[\]@!$&'()*+,;=]+)\?(.+?)(?=&|=|$)/g;
+    /(https?:\/\/[^\s]+\?(?:[^&\s]+&){2,}[^&\s]+)/g;
   return dataSet.match(greedyPattern) || [];
 }
 
 //notSoGreedy: returns URLs from the dataSet, with at least 2, but not more then 3 query parameters.
 function notSoGreedy(dataSet) {
-  //const notSoGreedyPattern = /(https?:\/\/)[^\s\/$.?#].[^\s]*\.[^\s]{2,}(?:\/[^\s]*)?(\?[^\s]{2,})?(?:\#[^\s]*)?/g;
   const notSoGreedyPattern =
     /https?:\/\/[^\s]+\?([^&=]+=[^&=]+&){1,2}[^&=]+=[^&=]+/g;
   return dataSet.match(notSoGreedyPattern) || [];
