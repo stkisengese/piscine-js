@@ -1,4 +1,4 @@
-const isValid = (date) => date instanceof Date && !isNaN(date.getTime());
+const isValid = (date) => date instanceof Date && !isNaN(new Date(date)) || Date.now() === date;
 
 //checks if the fist date is after the second date
 function isAfter(date1, date2) {
@@ -24,6 +24,7 @@ const date1 = new Date('2024-10-02');
 const date2 = new Date('2023-09-02');
 
 console.log(isValid(date1)); 
+console.log(isValid(Date.now())); 
 console.log(isAfter(date1, date2)); 
 console.log(isBefore(date1, date2));
 console.log(isFuture(date1)); 
