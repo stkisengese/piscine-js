@@ -9,7 +9,11 @@ function addWeek(date) {
 
 function timeTravel(options) {
     const { date, hour, minute, second } = options;
-    return new Date(date.getTime() + (hour * 3600000) + (minute * 60000) + (second * 1000));
+    const newDate = new Date(date);
+    newDate.setHours(hour);
+    newDate.setMinutes(minute);
+    newDate.setSeconds(second);
+    return newDate;
 }
 
 console.log(addWeek(new Date('0001-01-01'))); // Output: Monday
