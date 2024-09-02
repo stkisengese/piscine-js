@@ -1,4 +1,4 @@
-const {format, addDays} = require('date-fns');
+import {format, addDays} from 'date-fns';
 
 function addWeek(date) {
     const epoch = new Date('0001-01-01');
