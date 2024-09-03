@@ -1,23 +1,32 @@
 function firstDayWeek(week, year) {
-    year = parseInt(year);
-    let jan1 = new Date(year, 0, 1);
-   
-    jan1.setDate(jan1.getDate() + (8-jan1.getDate())%7);
-    jan1.setDate(jan1.getDate() + (week -1)*7);
-    
-    // if targetDate is in previous year, we return January 1st
-    if (jan1.getFullYear() < year) {
-        return formatDate(jan1);
+  let time = new Date(year);
+  if (week === 1) {
+    time.setHours(24);
+    return formattedDate(time);
+  }
+
+  let dayPlus = week * 7 * 24;
+  time.setHours(dayPlus -123);
+
+  for (let i = 0; i < 7; i++ ) {
+    if (getWeekDay(time) === 'Monday') {
+      return formattedDate(time);
     }
-    return formatDate(jan1);
+    time.setHours(-24);
+  }
+  return time;
 }
 
-function formatDate(date) {
-    let day = String(date.getDate()).padStart(2, '0');
-    let month = String(date.getMonth() + 1).padStart(2, '0');
-    let year = date.getFullYear();
+function formattedDate(date) {
+  let dd = String(date.getDate() - 1).padStart(2, '0');
+  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = String(date.getFullYear()).padStart(4, '0');
+  return `${dd}-${mm}-${yyyy}`;
+}
 
-    return `${day}-${month}-${year}`;
+function getWeekDay(date) {
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return daysOfWeek[date.getDay() - 1];
 }
 
 // Example usage:
