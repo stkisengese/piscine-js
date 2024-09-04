@@ -1,7 +1,7 @@
 function format(date, format) {
     const options = {
-        y: date.getFullYear().toString().slice(-2),
-        yyyy: date.getFullYear(),
+        y: date.getFullYear() > 0 ? date.getFullYear() : -date.getFullYear(),
+        yyyy: date.getFullYear() > 0 ? date.getFullString() : String(-date.getFullYear()).padStart(4, '0'),
         G: date.getFullYear() > 0 ? 'AD' : 'BC',
         GGGG: date.getFullYear() > 0 ? 'Anno Domini' : 'Before Christ',
         M: date.getMonth() + 1,
@@ -25,5 +25,5 @@ function format(date, format) {
       return format.replace(/y{1,4}|G{1,4}|M{1,4}|d{1,2}|E{1,4}|h{1,2}|m{1,2}|s{1,2}|H{1,2}|a/g, match => options[match]);
 }
 
-const d = new Date('July 20, 1969, 20:17:40');
-console.log(format(d, 'HH(mm)ss [dd] <MMM>')); // -> '03(08)19 [07] <Jan>'
+const d = new Date(-585, 4, 28);
+console.log(format(d, 'yyyy')); // -> '03(08)19 [07] <Jan>'
