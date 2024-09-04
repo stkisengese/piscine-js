@@ -21,12 +21,12 @@ const trimTemp = (arrObj) =>
     );
 
 const tempForecasts = (arrObj) =>
-    arrObj.map(({ city, temperature, state, region }) => 
-        `${fahrenheitToCelsius([temperature])[0]} in ${upperCasingStates([city])}, ${upperCasingStates([state])} (${upperCasingStates([region])})}`
+    arrObj.map(({ city, temperature, state }) => 
+        `${fahrenheitToCelsius([temperature])[0] + 'elsius'} in ${upperCasingStates([city])}, ${upperCasingStates([state])}`
     );
 
 
-console.log(trimTemp([
+console.log(tempForecasts([
     {
       city: 'Los Angeles',
       state: 'california',
