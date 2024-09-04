@@ -1,6 +1,5 @@
 
-const adder = (numbers) => {
-    let initialValue = 0
+const adder = (numbers, initialValue = 0) => {
     return numbers.reduce((sum, num) => sum + num, initialValue);
   };
   
@@ -16,3 +15,4 @@ const funcExec = (functions, initialValue) => {
   };
   
 console.log(sumOrMul([1, 2, 3, 5, 8], 5)); // 160
+console.log(adder([9, 24, 7, 11, 3], 10)) // 64
