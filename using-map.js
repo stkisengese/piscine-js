@@ -21,8 +21,8 @@ const trimTemp = (arrObj) =>
     );
 
 const tempForecasts = (arrObj) =>
-    arrObj.map(({ city, temperature, state }) => 
-        `${fahrenheitToCelsius([temperature])[0]} in ${upperCasingStates([city])}, ${upperCasingStates([state])}`
+    arrObj.map(({ city, temperature, state, region }) => 
+        `${fahrenheitToCelsius([temperature])[0]} in ${upperCasingStates([city])}, ${upperCasingStates([state])} (${upperCasingStates([region])})}`
     );
 
 
