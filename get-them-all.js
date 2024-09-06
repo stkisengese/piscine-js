@@ -5,8 +5,9 @@ const partition = (array, callback) => [
 
 // Function to get architects and non-architects
 export const getArchitects = () => {
-    const allPeople = Array.from(document.getElementsByTagName('a'));
-    return partition(allPeople, person => person.tagName.toLowerCase() === 'a');
+    const architects = Array.from(document.getElementsByTagName('a'));
+    const nonArchitects = Array.from(document.getElementsByTag('span'));
+    return [architects, nonArchitects];
 };
   
 // Function to get classical and non-classical architects
