@@ -4,7 +4,7 @@ let currentIndex = 0;
 let isRemoving = false;
 
 export function pimp() {
-  const button = this; // 'this' refers to the button element
+  const button = document.querySelector('.button');
 
   if (isRemoving) {
     if (currentIndex > 0) {
