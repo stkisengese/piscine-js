@@ -6,7 +6,7 @@ let isRemoving = false;
 export function pimp() {
   const button = document.querySelector('.button');
 
-  if (isRemoving) {
+  if (isRemoving && button.classList.contains('unpimp')) {
     if (currentIndex > 0) {
       currentIndex--;
       button.classList.remove(styles[currentIndex]);
