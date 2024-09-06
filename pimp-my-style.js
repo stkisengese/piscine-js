@@ -1,28 +1,27 @@
 import { styles } from './pimp-my-style.data.js'
 
-let currentIndex = 0;
-let isRemoving = false;
+let index = 0
+let isAdding = true
 
 export function pimp() {
-  const button = document.querySelector('.button');
-
-  if (isRemoving && button.classList.contains('unpimp')) {
-    if (currentIndex > 0) {
-      currentIndex--;
-      button.classList.remove(styles[currentIndex]);
-    } else {
-      isRemoving = false;
-      button.classList.remove('unpimp');
+  const button = document.querySelector('.button')
+  
+  if (isAdding) {
+    if (index < styles.length) {
+      button.classList.add(styles[index])
+      index++
+      if (index === styles.length) {
+        isAdding = false
+        button.classList.add('unpimp')
+      }
     }
-
   } else {
-    if (currentIndex < styles.length) {
-      button.classList.add(styles[currentIndex]);
-      currentIndex++;
-      
-      if (currentIndex === styles.length) {
-        isRemoving = true;
-        button.classList.add('unpimp');
+    if (index > 0) {
+      index--
+      button.classList.remove(styles[index])
+      if (index === 0) {
+        isAdding = true
+        button.classList.remove('unpimp')
       }
     }
   }
