@@ -19,7 +19,7 @@ export function grid() {
   // Append ranges div to body
   body.appendChild(rangesDiv);
 
-  // form for new gossip
+  // Create the form for new gossip
   const form = document.createElement('form');
   form.className = 'gossip';
 
@@ -62,8 +62,7 @@ export function grid() {
     const gossipCard = document.createElement('div');
     gossipCard.className = 'gossip';
     gossipCard.textContent = text;
-    //body.appendChild(gossipCard);
-    body.insertBefore(gossipCard, form.nextSibling);
+    body.appendChild(gossipCard);
   }
 
   function updateStyles() {
