@@ -46,7 +46,7 @@ export function grid() {
   });
 
   // Display gossips
-  gossips.forEach(addGossipCard);
+  gossips.slice().reverse().forEach(addGossipCard);
 
   function createRangeInput(id, min, max) {
     const input = document.createElement('input');
