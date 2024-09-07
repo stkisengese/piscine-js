@@ -3,53 +3,39 @@ import { gossips } from './gossip-grid.data.js';
 export function grid() {
   const body = document.body;
 
-  const rangesDiv = document.createElement('div');
-  rangesDiv.className = 'ranges';
-
-  // range inputs
-  const widthRange = createRangeInput('width', 200, 800);
-  const fontSizeRange = createRangeInput('fontSize', 20, 40);
-  const backgroundRange = createRangeInput('background', 20, 75);
-
-  // Append range inputs to ranges div
-  rangesDiv.appendChild(widthRange);
-  rangesDiv.appendChild(fontSizeRange);
-  rangesDiv.appendChild(backgroundRange);
-
-  // Append ranges div to body
+  // Create and append the ranges div
+  const rangesDiv = createRangesDiv();
   body.appendChild(rangesDiv);
 
-  // Create the form for new gossip
-  const form = document.createElement('form');
-  form.className = 'gossip';
+  // Create and append the gossip container
+  const gossipContainer = document.createElement('div');
+  gossipContainer.className = 'gossip-container';
+  body.appendChild(gossipContainer);
 
-  const textarea = document.createElement('textarea');
-  form.appendChild(textarea);
+  // Create and append the form for new gossip
+  const form = createGossipForm();
+  gossipContainer.appendChild(form);
 
-  const submitButton = document.createElement('button');
-  submitButton.type = 'submit';
-  submitButton.textContent = 'Share gossip!';
-  form.appendChild(submitButton);
+  // Display existing gossips
+  gossips.forEach(gossip => addGossipCard(gossip, gossipContainer));
 
-  // Append form to body
-  body.appendChild(form);
+  // Function to create the ranges div
+  function createRangesDiv() {
+    const div = document.createElement('div');
+    div.className = 'ranges';
 
-  // Add event listener to form
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const textarea = form.querySelector('textarea');
-    //const newGossip = textarea.value.trim();
-    //if (newGossip) {
-    //  addGossipCard(newGossip);
-    if (textarea.value.trim()) {
-        addGossipCard(textarea.value);
-        textarea.value = '';
-    }
-  });
+    const widthRange = createRangeInput('width', 200, 800);
+    const fontSizeRange = createRangeInput('fontSize', 20, 40);
+    const backgroundRange = createRangeInput('background', 20, 75);
 
-  // Display gossips
-  gossips.forEach(addGossipCard);
+    div.appendChild(widthRange);
+    div.appendChild(fontSizeRange);
+    div.appendChild(backgroundRange);
 
+    return div;
+  }
+
+  // Function to create range input
   function createRangeInput(id, min, max) {
     const input = document.createElement('input');
     input.type = 'range';
@@ -61,13 +47,40 @@ export function grid() {
     return input;
   }
 
-  function addGossipCard(text) {
+  // Function to create the gossip form
+  function createGossipForm() {
+    const form = document.createElement('form');
+    form.className = 'gossip';
+
+    const textarea = document.createElement('textarea');
+    form.appendChild(textarea);
+
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Share gossip!';
+    form.appendChild(submitButton);
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const newGossip = textarea.value.trim();
+      if (newGossip) {
+        addGossipCard(newGossip, gossipContainer);
+        textarea.value = '';
+      }
+    });
+
+    return form;
+  }
+
+  // Function to add a gossip card
+  function addGossipCard(text, container) {
     const gossipCard = document.createElement('div');
     gossipCard.className = 'gossip';
     gossipCard.textContent = text;
-    body.appendChild(gossipCard);
+    container.appendChild(gossipCard);
   }
 
+  // Function to update styles based on range inputs
   function updateStyles() {
     const width = document.getElementById('width').value;
     const fontSize = document.getElementById('fontSize').value;
