@@ -37,10 +37,13 @@ export function grid() {
   // Add event listener to form
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const newGossip = textarea.value.trim();
-    if (newGossip) {
-      addGossipCard(newGossip);
-      textarea.value = '';
+    const textarea = form.querySelector('textarea');
+    //const newGossip = textarea.value.trim();
+    //if (newGossip) {
+    //  addGossipCard(newGossip);
+    if (textarea.value.trim()) {
+        addGossipCard(textarea.value);
+        textarea.value = '';
     }
   });
 
