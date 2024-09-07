@@ -12,13 +12,13 @@ export function grid() {
   gossipContainer.className = 'gossip-container';
   body.appendChild(gossipContainer);
 
-  // Create and append the form for new gossip
-  const form = createGossipForm();
-  gossipContainer.appendChild(form);
-
   // Display existing gossips
   gossips.forEach(gossip => addGossipCard(gossip, gossipContainer));
 
+  // Create and append the form for new gossip
+  const form = createGossipForm();
+  gossipContainer.appendChild(form);
+  
   // Function to create the ranges div
   function createRangesDiv() {
     const div = document.createElement('div');
