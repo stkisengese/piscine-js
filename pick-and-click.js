@@ -58,6 +58,6 @@ export const pick = () => {
       .catch(err => console.error('Failed to copy: ', err));
   };
 
-  body.addEventListener('mousemove', updateColor);
+  document.addEventListener('mousemove', updateColor);
   body.addEventListener('click', copyToClipboard);
 };
