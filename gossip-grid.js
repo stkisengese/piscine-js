@@ -1,99 +1,80 @@
 import { gossips } from './gossip-grid.data.js';
 
 export function grid() {
-  const container = document.createElement('div');
-  container.classList.add('gossip-container');
-  document.body.appendChild(container);
+  const body = document.body;
+
+  const rangesDiv = document.createElement('div');
+  rangesDiv.className = 'ranges';
+
+  // range inputs
+  const widthRange = createRangeInput('width', 200, 800);
+  const fontSizeRange = createRangeInput('fontSize', 20, 40);
+  const backgroundRange = createRangeInput('background', 20, 75);
+
+  // Append range inputs to ranges div
+  rangesDiv.appendChild(widthRange);
+  rangesDiv.appendChild(fontSizeRange);
+  rangesDiv.appendChild(backgroundRange);
+
+  // Append ranges div to body
+  body.appendChild(rangesDiv);
 
   // Create the form for new gossip
-  const formCard = document.createElement('div');
-  formCard.classList.add('gossip');
-  
   const form = document.createElement('form');
+  form.className = 'gossip';
+
   const textarea = document.createElement('textarea');
-  textarea.placeholder = 'Share your gossip here...';
-  
+  form.appendChild(textarea);
+
   const submitButton = document.createElement('button');
   submitButton.type = 'submit';
   submitButton.textContent = 'Share gossip!';
-  
-  form.appendChild(textarea);
   form.appendChild(submitButton);
-  formCard.appendChild(form);
-  
-  container.appendChild(formCard);
 
-  // Create gossip cards from imported data
-  gossips.forEach(gossip => {
-    const gossipCard = document.createElement('div');
-    gossipCard.classList.add('gossip');
-    gossipCard.textContent = gossip;
-    container.appendChild(gossipCard);
-  });
+  // Append form to body
+  body.appendChild(form);
 
-  // Create range inputs for dynamic styling
-  const rangesDiv = document.createElement('div');
-  rangesDiv.classList.add('ranges');
-
-  const widthInput = document.createElement('input');
-  widthInput.type = 'range';
-  widthInput.id = 'width';
-  widthInput.min = '200';
-  widthInput.max = '800';
-  widthInput.value = '400';  // Default value
-
-  const fontSizeInput = document.createElement('input');
-  fontSizeInput.type = 'range';
-  fontSizeInput.id = 'fontSize';
-  fontSizeInput.min = '20';
-  fontSizeInput.max = '40';
-  fontSizeInput.value = '24';  // Default value
-
-  const backgroundInput = document.createElement('input');
-  backgroundInput.type = 'range';
-  backgroundInput.id = 'background';
-  backgroundInput.min = '20';
-  backgroundInput.max = '75';
-  backgroundInput.value = '50';  // Default value
-
-  rangesDiv.appendChild(widthInput);
-  rangesDiv.appendChild(fontSizeInput);
-  rangesDiv.appendChild(backgroundInput);
-
-  document.body.appendChild(rangesDiv);
-
-  // Function to update styles based on range inputs
-  function updateStyles() {
-    const width = widthInput.value + 'px';
-    const fontSize = fontSizeInput.value + 'px';
-    const backgroundLightness = backgroundInput.value + '%';
-    const hslBackground = `hsl(0, 0%, ${backgroundLightness})`;
-
-    document.querySelectorAll('.gossip').forEach(card => {
-      card.style.width = width;
-      card.style.fontSize = fontSize;
-      card.style.backgroundColor = hslBackground;
-    });
-  }
-
-  // Attach event listeners to range inputs
-  widthInput.addEventListener('input', updateStyles);
-  fontSizeInput.addEventListener('input', updateStyles);
-  backgroundInput.addEventListener('input', updateStyles);
-
-  // Initial style update
-  updateStyles();
-
-  // Handle form submission to add new gossip
-  document.querySelector('form').addEventListener('submit', (event) => {
+  // Add event listener to form
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
+    const textarea = form.querySelector('textarea');
     const newGossip = textarea.value.trim();
     if (newGossip) {
-      const newGossipCard = document.createElement('div');
-      newGossipCard.classList.add('gossip');
-      newGossipCard.textContent = newGossip;
-      container.appendChild(newGossipCard);
-      textarea.value = '';  // Clear textarea
+      addGossipCard(newGossip);
+      textarea.value = '';
     }
   });
+
+  // Display gossips
+  gossips.forEach(addGossipCard);
+
+  function createRangeInput(id, min, max) {
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.className = 'range';
+    input.id = id;
+    input.min = min;
+    input.max = max;
+    input.addEventListener('input', updateStyles);
+    return input;
+  }
+
+  function addGossipCard(text) {
+    const gossipCard = document.createElement('div');
+    gossipCard.className = 'gossip';
+    gossipCard.textContent = text;
+    body.appendChild(gossipCard);
+  }
+
+  function updateStyles() {
+    const width = document.getElementById('width').value;
+    const fontSize = document.getElementById('fontSize').value;
+    const background = document.getElementById('background').value;
+
+    document.querySelectorAll('.gossip').forEach((gossip) => {
+      gossip.style.width = `${width}px`;
+      gossip.style.fontSize = `${fontSize}px`;
+      gossip.style.backgroundColor = `hsl(280, 50%, ${background}%)`;
+    });
+  }
 }
