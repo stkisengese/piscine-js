@@ -1,55 +1,71 @@
 export function pick() {
+  const body = document.body;
+
   const hslDiv = document.createElement('div');
-  hslDiv.className = 'hsl text';
-  document.body.appendChild(hslDiv);
+  hslDiv.className = 'hsl';
+  body.appendChild(hslDiv);
 
   const hueDiv = document.createElement('div');
   hueDiv.className = 'hue text';
-  document.body.appendChild(hueDiv);
+  body.appendChild(hueDiv);
 
   const luminosityDiv = document.createElement('div');
   luminosityDiv.className = 'luminosity text';
-  document.body.appendChild(luminosityDiv);
+  body.appendChild(luminosityDiv);
 
-  const svgNS = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(svgNS, 'svg');
-  document.body.appendChild(svg);
+  // Create SVG element
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.style.position = 'fixed';
+  svg.style.top = '0';
+  svg.style.left = '0';
+  svg.style.width = '100%';
+  svg.style.height = '100%';
+  svg.style.pointerEvents = 'none';
+  body.appendChild(svg);
 
-  const axisX = document.createElementNS(svgNS, 'line');
-  axisX.setAttribute('id', 'axisX');
+  // Create X axis line
+  const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  axisX.id = 'axisX';
   axisX.setAttribute('stroke', 'white');
   svg.appendChild(axisX);
 
-  const axisY = document.createElementNS(svgNS, 'line');
-  axisY.setAttribute('id', 'axisY');
+  // Create Y axis line
+  const axisY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  axisY.id = 'axisY';
   axisY.setAttribute('stroke', 'white');
   svg.appendChild(axisY);
 
-  document.addEventListener('mousemove', (event) => {
-      const hue = Math.round((event.clientX / window.innerWidth) * 360);
-      const luminosity = Math.round((event.clientY / window.innerHeight) * 100);
-      const hslValue = `hsl(${hue}, 50%, ${luminosity}%)`;
+  function updateColor(event) {
+    const x = event.clientX;
+    const y = event.clientY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-      document.body.style.backgroundColor = hslValue;
-      hslDiv.textContent = hslValue;
-      hueDiv.textContent = `Hue:\n${hue}`;
-      luminosityDiv.textContent = `Luminosity\n${luminosity}%`;
+    const hue = Math.round((x / width) * 360);
+    const luminosity = Math.round(100 - (y / height) * 100);
+    const hslValue = `hsl(${hue}, 50%, ${luminosity}%)`;
 
-      axisX.setAttribute('x1', clientX);
-      axisX.setAttribute('x2', clientX);
-      axisX.setAttribute('y1', 0);
-      axisX.setAttribute('y2', '100%');
+    body.style.background = hslValue;
+    hslDiv.textContent = hslValue;
+    hueDiv.textContent = `hue\n${hue}`;
+    luminosityDiv.textContent = `luminosity\n${luminosity}`;
 
-      axisY.setAttribute('x1', 0);
-      axisY.setAttribute('x2', '100%');
-      axisY.setAttribute('y1', clientY);
-      axisY.setAttribute('y2', clientY);
-  });
+    axisX.setAttribute('x1', x);
+    axisX.setAttribute('x2', x);
+    axisX.setAttribute('y1', 0);
+    axisX.setAttribute('y2', '100%');
 
-  document.addEventListener('click', () => {
-      const hslValue = hslDiv.textContent;
-      navigator.clipboard.writeText(hslValue).then(() => {
-          alert(`Copied to clipboard: ${hslValue}`);
-      });
-  });
+    axisY.setAttribute('x1', 0);
+    axisY.setAttribute('x2', '100%');
+    axisY.setAttribute('y1', y);
+    axisY.setAttribute('y2', y);
+  }
+
+  function copyToClipboard() {
+    const hslValue = hslDiv.textContent;
+    navigator.clipboard.writeText(hslValue).catch(err => console.error('Failed to copy: ', err));
+  }
+
+  document.addEventListener('mousemove', updateColor);
+  document.addEventListener('click', copyToClipboard);
 }
