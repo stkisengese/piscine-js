@@ -63,7 +63,7 @@ export function grid() {
     const gossipCard = document.createElement('div');
     gossipCard.className = 'gossip';
     gossipCard.textContent = text;
-    body.appendChild(gossipCard);
+    body.insertBefore(gossipCard, form.nextSibling);
   }
 
   function updateStyles() {
