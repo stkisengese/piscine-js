@@ -37,7 +37,7 @@ export function pick() {
     const { innerWidth, innerHeight } = window;
 
     const hue = Math.round((clientX / innerWidth) * 360);
-    const luminosity = Math.round((1 - clientY / innerHeight) * 100);
+    const luminosity = Math.round((clientY / innerHeight) * 100);
     const hslValue = `hsl(${hue}, 50%, ${luminosity}%)`;
 
     body.style.backgroundColor = hslValue;
