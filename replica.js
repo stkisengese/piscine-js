@@ -1,5 +1,10 @@
 function isObject(obj) {
-  return obj && typeof obj === "object" && !Array.isArray(obj);
+  return (
+    obj &&
+    typeof obj === "object" &&
+    !Array.isArray(obj) &&
+    !(obj instanceof RegExp)
+  );
 }
 
 function replica(target, ...sources) {
@@ -11,6 +16,8 @@ function replica(target, ...sources) {
             Object.assign(target, { [key]: {} });
           }
           replica(target[key], source[key]);
+        } else if (source[key] instanceof RegExp) {
+          Object.assign(target, { [key]: new RegExp(source[key]) });
         } else {
           Object.assign(target, { [key]: source[key] });
         }
@@ -22,10 +29,11 @@ function replica(target, ...sources) {
 
 // Example usage:
 const target = { a: 1, b: { c: 2 } };
+const source = { reg: /hello/ };
 const source1 = { b: { d: 3 } };
 const source2 = { e: 4 };
 
-const result = replica(target, source1, source2);
+const result = replica(target, source, source1, source2);
 console.log(result); // { a: 1, b: { c: 2, d: 3 }, e: 4 }
 
 const targetA = { a: 1, b: { c: 2 } };
