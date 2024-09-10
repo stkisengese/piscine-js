@@ -18,7 +18,7 @@ function omit(obj, keys) {
   const result = {};
   const keyArray = Array.isArray(keys) ? keys : [keys];
   for (const key in obj) {
-    if (!keyArray.includes(key)) {
+    if (obj.hasOwnProperty(key) && !keyArray.includes(key)) {
       result[key] = obj[key];
     }
   }
