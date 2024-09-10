@@ -18,10 +18,7 @@ const reduceScore = (personnel, addParam = 0) =>
 // filterForce returns an object of only people who use the force greater or equal to 80.
 const filterForce = (personel) =>
   filterCurry(
-    ([_, { pilotingScore, shootingScore }]) =>
-      pilotingScore + shootingScore >= 80
-    //   ([_, person]) => 
-    //   person.isForceUser && person.shootingScore >= 80
+    ([_, person]) => person.isForceUser && person.shootingScore >= 80
   )(personel);
 
 // mapAverage returns the averageScore property for average score per person.
