@@ -53,7 +53,7 @@ function cartTotal(cart) {
     const scaledNutrition = Object.fromEntries(
       Object.entries(itemNutrition).map(([nutrient, value]) => [
         nutrient,
-        Number((value * quantity) / 100).toFixed(1),
+        (value * quantity) / 100,
       ])
     );
     return [item, scaledNutrition];
