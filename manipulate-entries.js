@@ -31,12 +31,13 @@ function reduceEntries(obj, callback, initialValue) {
 }
 
 function totalCalories(cart) {
-  return reduceEntries(
+  const total = reduceEntries(
     cart,
     (total, [item, quantity]) =>
       total + (nutritionDB[item].calories * quantity) / 100,
     0
   );
+  return Number(total.toFixed(1));
 }
 
 function lowCarbs(cart) {
@@ -52,7 +53,7 @@ function cartTotal(cart) {
     const scaledNutrition = Object.fromEntries(
       Object.entries(itemNutrition).map(([nutrient, value]) => [
         nutrient,
-        (value * quantity) / 100,
+        Number((value * quantity) / 100).toFixed(1),
       ])
     );
     return [item, scaledNutrition];
