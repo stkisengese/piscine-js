@@ -9,6 +9,18 @@ function deepCopy(obj) {
     return new Date(obj.getTime());
   }
 
+  // regexp objects
+  if (obj instanceof RegExp) {
+    return new RegExp(obj.source, obj.flags);
+  }
+
+  // Function objects
+  if (typeof obj === "function") {
+    const newFunc = Function.prototype.constructor.bind(obj);
+    const newArgs = [...obj.arguments];
+    return newFunc(...newArgs);
+  }
+
   // Array objects
   if (Array.isArray(obj)) {
     return obj.map(deepCopy);
