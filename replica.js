@@ -12,8 +12,8 @@ function replica(target, ...sources) {
     if (isObject(source)) {
       Object.keys(source).forEach((key) => {
         if (isObject(source[key])) {
-          if (!target[key]) {
-            Object.assign(target, { [key]: {} });
+          if (!isObject(target[key])) {
+            target[key] = {};
           }
           replica(target[key], source[key]);
         } else if (source[key] instanceof RegExp) {
@@ -44,3 +44,9 @@ const resultA = replica(targetA, sourceA1, sourceA2);
 
 console.log(resultA);
 // Expected output: { a: 1, b: { c: 2, d: 3 }, e: 4, f: 5, g: { h: 6 } }
+
+const targetB = { a: 4 };
+const sourceB = { a: { b: 1 } };
+
+const resultB = replica(targetB, sourceB);
+console.log(resultB.a.b); // 1
