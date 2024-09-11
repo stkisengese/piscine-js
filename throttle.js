@@ -29,33 +29,57 @@ function opThrottle(func, wait, options = {}) {
   let lastArgs = null;
   let lastCallTime = 0;
   let lastInvokeTime = 0;
+  let isInvoking = false;
 
   const leading = "leading" in options ? !!options.leading : true;
   const trailing = "trailing" in options ? !!options.trailing : true;
 
-  function invokeFunc() {
-    lastInvokeTime = Date.now();
+  function invokeFunc(time) {
+    lastInvokeTime = time;
+    isInvoking = true;
     func(...lastArgs);
+    isInvoking = false;
+  }
+
+  function shouldInvoke(time) {
+    const timeSinceLastCall = time - lastCallTime;
+    const timeSinceLastInvoke = time - lastInvokeTime;
+
+    return (
+      lastCallTime === 0 ||
+      timeSinceLastCall >= wait ||
+      timeSinceLastInvoke >= wait
+    );
+  }
+
+  function trailingEdge(time) {
+    timeout = null;
+    if (trailing && lastArgs) {
+      invokeFunc(time);
+    }
     lastArgs = null;
   }
 
-  return function executedFunction(...args) {
-    const currentTime = Date.now();
-    const timeSinceLastInvoke = currentTime - lastInvokeTime;
+  return function throttledFunction(...args) {
+    const time = Date.now();
+    const isInvokeNeeded = shouldInvoke(time);
 
-    lastCallTime = currentTime;
     lastArgs = args;
+    lastCallTime = time;
 
-    if (timeSinceLastInvoke >= wait && leading) {
-      invokeFunc();
-    } else if (!timeout && trailing) {
-      timeout = setTimeout(() => {
-        const shouldInvoke = Date.now() - lastCallTime >= wait;
-        if (shouldInvoke) {
-          invokeFunc();
+    if (isInvokeNeeded) {
+      if (timeout === null) {
+        if (leading) {
+          invokeFunc(time);
         }
-        timeout = null;
-      }, Math.max(wait - timeSinceLastInvoke, 0));
+      }
+      if (timeout === null && !isInvoking && trailing) {
+        timeout = setTimeout(() => trailingEdge(Date.now()), wait);
+      }
+    } else if (timeout === null && trailing) {
+      timeout = setTimeout(() => trailingEdge(Date.now()), wait);
     }
+
+    return lastInvokeTime;
   };
 }
