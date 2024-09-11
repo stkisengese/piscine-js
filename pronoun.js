@@ -17,6 +17,10 @@ function pronoun(str) {
       }
     }
   }
+    // Remove duplicates from the word arrays
+    for (const pronoun in result) {
+        result[pronoun].word = [...new Set(result[pronoun].word)];
+    }
 
   return result;
 }
