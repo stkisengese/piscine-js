@@ -44,6 +44,13 @@ function neuron(data) {
       result.orders[key].responses.push(response);
     }
   });
+  // Clean up empty sections
+  if (Object.keys(result.questions).length === 0) {
+    delete result.questions;
+  }
+  if (Object.keys(result.orders).length === 0) {
+    delete result.orders;
+  }
 
   return result;
 }
