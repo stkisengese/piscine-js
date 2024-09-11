@@ -2,7 +2,7 @@ function pronoun(str) {
   const pronouns = ["i", "you", "he", "she", "it", "they", "we"];
   const result = {};
 
-  const words = str.split(/\s+/);
+  const words = str.split(/[\s,]+/);
 
   // Count the occurrences of each pronoun and their adjacent words
   for (let i = 0; i < words.length; i++) {
@@ -33,3 +33,6 @@ console.log(pronoun(ex1));
 const ex2 = "If he you want to buy something you have to pay.";
 console.log(pronoun(ex2));
 // Output: { he: { word: [], count: 1 }, you: { word: [ 'want', 'have' ], count: 2 } }
+const ex3 = 'I buy,\ni to,\nYOU buy,\nit have,\nIt buys,\nit is,\nyou go';
+console.log(pronoun(ex3));
+// Output: { i: { word: ['buy', 'to'], count: 2 }, you: { word: ['buy', 'go'], count: 2 }, it: { word: ['have', 'buys', 'is'], count: 3 } }
