@@ -6,15 +6,28 @@ function flags(input) {
 
   const keys = Object.keys(input);
   const longToShortMap = {};
+  const usedAliases = new Set();
 
   // Generate aliases and short descriptions
   keys.forEach((key) => {
     if (key !== "help") {
-      const shortKey = key.replace(/[^a-zA-Z]/g, "").charAt(0); // Get the first letter for alias
+      const sanitizedKey = key.replace(/[^a-zA-Z]/g, "");
+      const shortKey = sanitizedKey.charAt(0); // Get the first letter for alias
+
+      // Ensure unique shortKey
+      let uniqueShortKey = shortKey;
+      let counter = 1;
+      while (usedAliases.has(uniqueShortKey)) {
+        uniqueShortKey = sanitizedKey.charAt(counter++) || shortKey;
+      }
+      usedAliases.add(uniqueShortKey);
+
       const formattedKey = `--${key}`;
-      result.alias[shortKey] = key;
-      result.description.push(`-${shortKey}, ${formattedKey}: ${input[key]}`);
-      longToShortMap[key] = shortKey;
+      result.alias[uniqueShortKey] = key;
+      longToShortMap[key] = uniqueShortKey;
+      result.description.push(
+        `-${uniqueShortKey}, ${formattedKey}: ${input[key]}`
+      );
     }
   });
 
@@ -23,15 +36,13 @@ function flags(input) {
 
   // Handle 'help' flag to return specific descriptions
   if (input.help) {
-    input.help.forEach((flag) => {
-      if (input[flag]) {
+    result.description = input.help
+      .filter((flag) => input[flag])
+      .map((flag) => {
         const shortFlag = longToShortMap[flag] || flag.charAt(0);
         const formattedFlag = `--${flag}`;
-        result.description.push(
-          `-${shortFlag}, ${formattedFlag}: ${input[flag]}`
-        );
-      }
-    });
+        return `-${shortFlag}, ${formattedFlag}: ${input[flag]}`;
+      });
   } else {
     // Add descriptions for all flags
     result.description = result.description.join("\n");
@@ -39,24 +50,16 @@ function flags(input) {
 
   return {
     alias: result.alias,
-    description: result.description,
+    description: result.description.join("\n"),
   };
 }
 
 // Example usage
-const input2 = {
+const input = {
   invert: "inverts an object",
   "convert-map": "converts the object to an array",
   assign: "uses the function assign - assign to target object",
-};
-
-console.log(JSON.stringify(flags(input2), null, 2));
-
-const input = {
-  multiply: "multiply the values",
-  divide: "divides the values",
-  help: ["divide"],
+  help: ["assign", "invert"],
 };
 
 console.log(JSON.stringify(flags(input), null, 2));
-console.log(JSON.stringify(flags({}), null, 2));
