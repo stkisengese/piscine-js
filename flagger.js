@@ -1,45 +1,40 @@
-const flags = (input) => {
+function flags(input) {
     const result = {
-      alias: { h: 'help' },
-      description: []
+        alias: {},
+        description: []
     };
-  
-    const generateAlias = (flag) => flag.charAt(0).toLowerCase();
-  
-    for (const [flag] of Object.entries(input)) {
-      if (flag !== 'help') {
-        const alias = generateAlias(flag);
-        result.alias[alias] = flag;
-      }
+
+    const keys = Object.keys(input);
+    keys.forEach(key => {
+        if (key.length === 1) {
+            result.alias[key] = key;
+        }
+    });
+    result.alias['h'] = 'help';
+
+    if (input.help) {
+        // description for specified flags
+        input.help.forEach(flag => {
+            if (input[flag]) {
+                const flagName = flag.length === 1 ? flag : `--${flag}`;
+                result.description.push(`-${flagName.charAt(0)}, ${flagName}: ${input[flag]}`);
+            }
+        });
+    } else {
+        // descriptions for all flags
+        keys.forEach(key => {
+            if (key !== 'help') {
+                const flagName = key.length === 1 ? key : `--${key}`;
+                result.description.push(`-${flagName.charAt(0)}, ${flagName}: ${input[key]}`);
+            }
+        });
     }
-  
-    const generateDescription = (flag) => {
-      const alias = generateAlias(flag);
-      return `-${alias}, --${flag}: ${input[flag]}`;
+
+    return {
+        alias: result.alias,
+        description: result.description.join('\n')
     };
-  
-    if (Array.isArray(input.help)) {
-      input.help.forEach(flag => {
-        if (input[flag]) {
-          result.description.push(generateDescription(flag));
-        }
-      });
-    } else {
-      for (const flag in input) {
-        if (flag !== 'help') {
-          result.description.push(generateDescription(flag));
-        }
-      }
-    }
-  
-    if (result.description.length === 0) {
-      delete result.description;
-    } else {
-      result.description = result.description.join('\n');
-    }
-  
-    return result;
-  };
+}
 
   const input = {
     multiply: 'multiply the values',
@@ -48,3 +43,4 @@ const flags = (input) => {
 };
 
 console.log(JSON.stringify(flags(input), null, 2));
+console.log(JSON.stringify(flags({}), null, 2));
