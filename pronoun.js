@@ -1,26 +1,28 @@
 function pronoun(str) {
   const pronouns = ["i", "you", "he", "she", "it", "they", "we"];
+  const words = str.toLowerCase().split(/[\s,]+/);
+
   const result = {};
 
-  const words = str.split(/[\s,]+/);
-
-  // Count the occurrences of each pronoun and their adjacent words
+  // Iterate through words
   for (let i = 0; i < words.length; i++) {
-    const word = words[i].toLowerCase();
+    const word = words[i];
     if (pronouns.includes(word)) {
       if (!result[word]) {
+        // Initialize if first occurrence
         result[word] = { word: [], count: 0 };
       }
+
       result[word].count++;
-      if (i + 1 < words.length) {
-        result[word].word.push(words[i + 1]);
+
+      // Add next word if it exists and isn't another pronoun
+      if (i + 1 < words.length && !pronouns.includes(words[i + 1])) {
+        if (!result[word].word.includes(words[i + 1])) {
+          result[word].word.push(words[i + 1]);
+        }
       }
     }
   }
-    // Remove duplicates from the word arrays
-    for (const pronoun in result) {
-        result[pronoun].word = [...new Set(result[pronoun].word)];
-    }
 
   return result;
 }
@@ -33,6 +35,8 @@ console.log(pronoun(ex1));
 const ex2 = "If he you want to buy something you have to pay.";
 console.log(pronoun(ex2));
 // Output: { he: { word: [], count: 1 }, you: { word: [ 'want', 'have' ], count: 2 } }
-const ex3 = 'I buy,\ni to,\nYOU buy,\nit have,\nIt buys,\nit is,\nyou go';
+const ex3 = "I buy,\ni to,\nYOU buy,\nit have,\nIt buys,\nit is,\nyou go";
 console.log(pronoun(ex3));
 // Output: { i: { word: ['buy', 'to'], count: 2 }, you: { word: ['buy', 'go'], count: 2 }, it: { word: ['have', 'buys', 'is'], count: 3 } }
+
+console.log(pronoun(`it i it she is gone`));
