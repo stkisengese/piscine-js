@@ -3,8 +3,8 @@ function interpolation({ step, start, end, callback, duration }) {
   const timeStep = duration / step;
 
   for (let i = 1; i <= step; i++) {
-    const distance = Number((start + (i - 1) * stepSize).toFixed(1));
-    const point = i * timeStep;
+    const distance = Number((start + (i - 1) * stepSize).toFixed(2));
+    const point = Number((i * timeStep).toFixed(2));
 
     setTimeout(() => {
       callback([distance, point]);
@@ -13,9 +13,9 @@ function interpolation({ step, start, end, callback, duration }) {
 }
 
 const options = {
-  step: 5,
-  start: 0,
-  end: 1,
+  step: 3,
+  start: 1,
+  end: 2,
   callback: (data) => {
     console.log("Callback called with:", data);
   },
