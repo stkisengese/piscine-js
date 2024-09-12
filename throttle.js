@@ -24,32 +24,31 @@ function throttle(func, wait) {
 }
 
 // Throttle function with 'trailing' and 'leading' options
-function opThrottle(func, wait, options = {}) {
-  const { leading = false, trailing = true } = options;
+function opThrottle(fn, wait, options = {}) {
   let timeout = null;
-  let lastArgs = null;
-  let lastCallTime = 0;
+  let lastCall = 0;
+  const { leading = true, trailing = true } = options;
 
   return function (...args) {
     const now = Date.now();
-    const timeSinceLastCall = now - lastCallTime;
-    const shouldCallNow = leading && timeSinceLastCall >= wait;
-    const shouldCallLater = trailing && timeSinceLastCall >= wait;
 
-    if (shouldCallNow) {
-      func(...args);
-      lastCallTime = now;
-    } else if (!timeout) {
-      timeout = setTimeout(() => {
-        if (trailing && lastArgs) {
-          func(...lastArgs);
-        }
-        lastCallTime = leading ? Date.now() : 0;
+    if (!lastCall && !leading) lastCall = now;
+
+    const remaining = wait - (now - lastCall);
+
+    if (remaining <= 0) {
+      if (timeout) {
+        clearTimeout(timeout);
         timeout = null;
-        lastArgs = null;
-      }, wait - timeSinceLastCall);
+      }
+      lastCall = now;
+      fn.apply(this, args);
+    } else if (trailing && !timeout) {
+      timeout = setTimeout(() => {
+        lastCall = leading ? 0 : Date.now();
+        timeout = null;
+        fn.apply(this, args);
+      }, remaining);
     }
-
-    lastArgs = args;
   };
 }
