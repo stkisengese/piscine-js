@@ -24,64 +24,41 @@ function throttle(func, wait) {
 }
 
 // Throttle function with 'trailing' and 'leading' options
-function opThrottle(func, wait, options = {}) {
-  let lastCallTime = 0;
-  let lastInvokeTime = 0;
+function opThrottle(func, wait, options = { leading: true, trailing: true }) {
   let timeout = null;
   let lastArgs = null;
+  let lastCallTime = 0;
+  let result;
 
-  const leading = "leading" in options ? !!options.leading : true;
-  const trailing = "trailing" in options ? !!options.trailing : true;
-
-  function shouldInvoke(time) {
-    const timeSinceLastCall = time - lastCallTime;
-    const timeSinceLastInvoke = time - lastInvokeTime;
-    return (
-      lastCallTime === 0 ||
-      timeSinceLastCall >= wait ||
-      timeSinceLastInvoke >= wait
-    );
-  }
-
-  function invokeFunc(time) {
-    lastInvokeTime = time;
-    func(...lastArgs);
-  }
-
-  function leadingEdge(time) {
-    lastInvokeTime = time;
-    if (leading) invokeFunc(time);
-    return leading;
-  }
-
-  function trailingEdge(time) {
+  const later = (context) => {
+    lastCallTime = options.leading === false ? 0 : Date.now();
     timeout = null;
-    if (trailing && lastArgs) invokeFunc(time);
-  }
+    if (options.trailing && lastArgs) {
+      result = func.apply(context, lastArgs);
+      lastArgs = null;
+    }
+  };
 
-  return function throttled(...args) {
-    const time = Date.now();
-    const isInvoking = shouldInvoke(time);
+  return function (...args) {
+    const now = Date.now();
+    const isInvoking = options.leading && now - lastCallTime >= wait;
 
-    lastArgs = args;
-    lastCallTime = time;
+    if (!lastCallTime && options.leading === false) {
+      lastCallTime = now;
+    }
 
     if (isInvoking) {
-      if (timeout === null) {
-        if (leadingEdge(time)) {
-          return;
-        }
-      } else {
+      if (timeout) {
         clearTimeout(timeout);
         timeout = null;
       }
-      lastInvokeTime = time;
-      if (trailing) invokeFunc(time);
-    } else if (timeout === null && trailing) {
-      timeout = setTimeout(
-        () => trailingEdge(Date.now()),
-        Math.max(wait - (time - lastCallTime), 0)
-      );
+      result = func.apply(this, args);
+      lastCallTime = now;
+    } else if (!timeout && options.trailing) {
+      lastArgs = args;
+      timeout = setTimeout(() => later(this), wait);
     }
+
+    return result;
   };
 }
