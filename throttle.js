@@ -25,53 +25,63 @@ function throttle(func, wait) {
 
 // Throttle function with 'trailing' and 'leading' options
 function opThrottle(func, wait, options = {}) {
-  let lastArgs = null;
   let lastCallTime = 0;
+  let lastInvokeTime = 0;
   let timeout = null;
-  let result;
+  let lastArgs = null;
 
   const leading = "leading" in options ? !!options.leading : true;
   const trailing = "trailing" in options ? !!options.trailing : true;
 
-  function invokeFunc(time) {
-    const args = lastArgs;
-    lastArgs = null;
-    lastCallTime = time;
-    result = func(...args);
+  function shouldInvoke(time) {
+    const timeSinceLastCall = time - lastCallTime;
+    const timeSinceLastInvoke = time - lastInvokeTime;
+    return (
+      lastCallTime === 0 ||
+      timeSinceLastCall >= wait ||
+      timeSinceLastInvoke >= wait
+    );
   }
 
-  function shouldInvoke(time) {
-    return lastCallTime === 0 || time - lastCallTime >= wait;
+  function invokeFunc(time) {
+    lastInvokeTime = time;
+    func(...lastArgs);
+  }
+
+  function leadingEdge(time) {
+    lastInvokeTime = time;
+    if (leading) invokeFunc(time);
+    return leading;
   }
 
   function trailingEdge(time) {
     timeout = null;
-    if (trailing && lastArgs) {
-      invokeFunc(time);
-    }
+    if (trailing && lastArgs) invokeFunc(time);
   }
 
-  return function throttledFunction(...args) {
+  return function throttled(...args) {
     const time = Date.now();
-    lastArgs = args;
+    const isInvoking = shouldInvoke(time);
 
-    if (shouldInvoke(time)) {
-      if (timeout) {
+    lastArgs = args;
+    lastCallTime = time;
+
+    if (isInvoking) {
+      if (timeout === null) {
+        if (leadingEdge(time)) {
+          return;
+        }
+      } else {
         clearTimeout(timeout);
         timeout = null;
       }
-      if (leading || lastCallTime > 0) {
-        return invokeFunc(time);
-      }
-    }
-
-    if (!timeout && trailing) {
+      lastInvokeTime = time;
+      if (trailing) invokeFunc(time);
+    } else if (timeout === null && trailing) {
       timeout = setTimeout(
         () => trailingEdge(Date.now()),
-        wait - (time - lastCallTime)
+        Math.max(wait - (time - lastCallTime), 0)
       );
     }
-
-    return result;
   };
 }
