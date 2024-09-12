@@ -11,35 +11,30 @@ function throttle(func, wait) {
 }
 
 // Advanced throttle function with options
-function opThrottle(func, wait, options = {}) {
+function opThrottle(func, wait, { leading = false, trailing = false }) {
   let last = 0;
   let timer = null;
-  const leading = options.leading !== false;
-  const trailing = options.trailing !== false;
-
-  function invoke(time) {
-    last = time;
-    func.apply(this, arguments);
-  }
-
   return function () {
     const now = +new Date();
-    const remaining = wait - (now - last);
+    // leading execution
+    if (!last && leading === false) {
+      last = now;
+    }
 
-    if (remaining <= 0) {
+    if (now - last > wait) {
       if (timer) {
         clearTimeout(timer);
         timer = null;
       }
-      if (leading || last !== 0) {
-        invoke(now);
-      } else if (trailing) {
-        last = now;
-      }
-    } else if (!timer && trailing) {
+      func.apply(this, arguments);
+      last = now;
+      // trailing execution
+    } else if (!timer && trailing !== false) {
       timer = setTimeout(() => {
-        invoke(+new Date());
-      }, remaining);
+        func.apply(this, arguments); // execute function immediately
+        last = +new Date();
+        timer = null;
+      }, wait);
     }
   };
 }
