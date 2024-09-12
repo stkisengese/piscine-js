@@ -30,24 +30,18 @@ function opThrottle(func, wait, options = {}) {
   let lastArgs = null;
   let lastCallTime = 0;
 
-  return function executedFunction(...args) {
-    const currentTime = Date.now();
-    const remainingTime = wait - (currentTime - lastCallTime);
+  return function (...args) {
+    const now = Date.now();
+    const remaining = wait - (now - lastCallTime);
+    const shouldCallNow = leading && !lastCallTime;
+    const shouldCallLater = trailing && (remaining <= 0 || remaining >= wait);
 
-    if (!lastCallTime && !leading) {
-      lastCallTime = currentTime;
+    if (shouldCallNow) {
+      func(...args);
+      lastCallTime = now;
     }
 
-    if (leading && !lastCallTime) {
-      func(...args);
-      lastCallTime = currentTime;
-    } else if (remainingTime <= 0) {
-      if (trailing && lastArgs) {
-        func(...lastArgs);
-      }
-      lastCallTime = currentTime;
-      lastArgs = null;
-    } else if (!timeout) {
+    if (shouldCallLater && !timeout) {
       timeout = setTimeout(() => {
         timeout = null;
         if (trailing && lastArgs) {
@@ -55,7 +49,7 @@ function opThrottle(func, wait, options = {}) {
         }
         lastCallTime = leading ? Date.now() : 0;
         lastArgs = null;
-      }, remainingTime);
+      }, remaining);
     }
 
     lastArgs = args;
