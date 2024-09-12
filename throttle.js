@@ -11,7 +11,7 @@ function throttle(func, wait) {
 }
 
 // Advanced throttle function with options
-function opThrottle(func, wait, { leading = false, trailing = false }) {
+function opThrottle(func, wait, { leading = false, trailing = false }, {}) {
   let last = 0;
   let timer = null;
   return function () {
