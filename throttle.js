@@ -28,45 +28,56 @@ function opThrottle(func, wait, options = { leading: true, trailing: true }) {
   let timeout,
     lastCall = 0,
     lastArgs,
-    lastThis;
+    lastThis,
+    result;
 
   const invokeFunc = (time) => {
     lastCall = time;
     timeout = null;
-    func.apply(lastThis, lastArgs);
+    result = func.apply(lastThis, lastArgs);
     lastThis = lastArgs = null;
+    return result;
   };
 
   const leadingEdge = (time) => {
     lastCall = time;
     if (options.leading) {
-      invokeFunc(time);
+      result = invokeFunc(time);
     }
+    return result;
   };
 
   const trailingEdge = () => {
-    if (options.trailing && lastArgs) {
-      invokeFunc(Date.now());
-    }
+    if (timeout) clearTimeout(timeout);
     timeout = null;
+    if (options.trailing && lastArgs) {
+      return invokeFunc(Date.now());
+    }
+    lastThis = lastArgs = null;
+    return result;
+  };
+
+  const remainingWait = (time) => {
+    const timeSinceLastCall = time - lastCall;
+    const timeWaiting = wait - timeSinceLastCall;
+    return timeWaiting;
   };
 
   return function (...args) {
     const now = Date.now();
-    const remaining = wait - (now - lastCall);
+    const isInvoking = !timeout;
     lastThis = this;
     lastArgs = args;
 
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
+    if (isInvoking) {
+      if (options.leading) {
+        return leadingEdge(now);
       }
-      lastCall = now;
-      func.apply(lastThis, lastArgs);
-      lastThis = lastArgs = null;
-    } else if (!timeout && options.trailing) {
-      timeout = setTimeout(trailingEdge, remaining);
+      timeout = setTimeout(trailingEdge, wait);
+    } else {
+      clearTimeout(timeout);
+      timeout = setTimeout(trailingEdge, remainingWait(now));
     }
+    return result;
   };
 }
