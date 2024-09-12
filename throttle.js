@@ -6,15 +6,19 @@ function throttle(func, wait) {
   return function (...args) {
     const now = Date.now();
 
-    if (now - lastCall < wait) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        lastCall = now;
-        func.apply(this, args);
-      }, wait - (now - lastCall));
-    } else {
+    if (now - lastCall >= wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
       lastCall = now;
       func.apply(this, args);
+    } else if (!timeout) {
+      timeout = setTimeout(() => {
+        lastCall = Date.now();
+        func.apply(this, args);
+        timeout = null;
+      }, wait);
     }
   };
 }
