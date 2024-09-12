@@ -12,7 +12,7 @@ function retry(count, callback) {
         attempts++;
 
         if (attempts > count) {
-          throw new Error(`${attempts}:${lastError}`);
+          throw new Error(`x:${args[0]}`);
         }
       }
     }
