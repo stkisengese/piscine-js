@@ -1,57 +1,44 @@
 // Basic throttle function
 function throttle(func, wait) {
-  let timeout = null;
-  let lastCall = 0;
-
-  return function (...args) {
-    const now = Date.now();
-
-    if (now - lastCall >= wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-      lastCall = now;
-      func.apply(this, args);
-    } else if (!timeout) {
-      timeout = setTimeout(() => {
-        lastCall = Date.now();
-        func.apply(this, args);
-        timeout = null;
-      }, wait);
+  let last = 0;
+  return function () {
+    const now = +new Date();
+    if (now - last > wait) {
+      func.apply(this, arguments);
+      last = now;
     }
   };
 }
 
 // Advanced throttle function with options
 function opThrottle(func, wait, options = {}) {
-  let timeout = null;
-  let lastCall = 0;
-  let lastArgs = null;
-  const { leading = true, trailing = true } = options;
+  let last = 0;
+  let timer = null;
+  const leading = options.leading !== false;
+  const trailing = options.trailing !== false;
 
-  return function (...args) {
-    const now = Date.now();
+  function invoke(time) {
+    last = time;
+    func.apply(this, arguments);
+  }
 
-    if (!lastCall && !leading) {
-      lastCall = now;
-    }
+  return function () {
+    const now = +new Date();
+    const remaining = wait - (now - last);
 
-    const remaining = wait - (now - lastCall);
-
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
+    if (remaining <= 0) {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
       }
-      lastCall = now;
-      func.apply(this, args);
-    } else if (!timeout && trailing) {
-      lastArgs = args;
-      timeout = setTimeout(() => {
-        lastCall = leading ? Date.now() : 0;
-        timeout = null;
-        func.apply(this, lastArgs);
+      if (leading || last !== 0) {
+        invoke(now);
+      } else if (trailing) {
+        last = now;
+      }
+    } else if (!timer && trailing) {
+      timer = setTimeout(() => {
+        invoke(+new Date());
       }, remaining);
     }
   };
