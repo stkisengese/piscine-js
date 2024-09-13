@@ -6,8 +6,7 @@ async function series(asyncFunctions) {
       const result = await asyncFunc();
       results.push(result);
     } catch (error) {
-      // If any function throws an error, we add to result
-      results.push(error);
+      return error.message;
     }
   }
 
