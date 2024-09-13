@@ -8,8 +8,7 @@ async function getJSON(path, params = {}) {
   );
 
   try {
-    // Fetch the data
-    const response = await fetch(url);
+    const response = await fetch(url.toString());
 
     // Check if the response is OK
     if (!response.ok) {
