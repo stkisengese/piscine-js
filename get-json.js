@@ -1,6 +1,8 @@
 async function getJSON(path, params = {}) {
   // Construct the URL with query parameters
-  const url = new URL(path);
+  const baseURL = "http://example.com";
+  const url = new URL(path, baseURL);
+
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key])
   );
@@ -33,3 +35,7 @@ async function getJSON(path, params = {}) {
     throw error;
   }
 }
+
+// console.log(getJSON('/test', { query: 'hello world', b: 5 })
+// .then(data => console.log('Received data:', data))
+// .catch(error => console.error('Error:', error.message)));
