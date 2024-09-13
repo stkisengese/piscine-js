@@ -1,14 +1,24 @@
 async function getJSON(path, params = {}) {
-  // Construct the URL with query parameters
-  const baseURL = "http://example.com";
-  const url = new URL(path, baseURL);
+  let url;
+  try {
+    url = new URL(path);
+  } catch (error) {
+    // if invalid assume it's a relative path
+    url = new URL(path, "http://example.com");
+  }
 
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key])
   );
 
+  // For relative URLs, we need to return only the pathname and search
+  const urlToFetch =
+    url.protocol === "http:" && url.host === "example.com"
+      ? url.pathname + url.search
+      : url.toString();
+
   try {
-    const response = await fetch(url.toString());
+    const response = await fetch(urlToFetch);
 
     // Check if the response is OK
     if (!response.ok) {
