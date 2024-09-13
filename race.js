@@ -17,7 +17,7 @@ function some(promises, count) {
       return;
     }
 
-    const results = new Array(promises.length).fill(undefined);
+    const results = [];
     let resolvedCount = 0;
 
     promises.forEach((promise, index) => {
