@@ -13,7 +13,7 @@ function race(promises) {
 function some(promises, count) {
   return new Promise((resolve, reject) => {
     if (promises.length === 0 || count === 0) {
-      resolve(undefined);
+      resolve([]);
       return;
     }
 
