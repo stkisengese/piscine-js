@@ -10,32 +10,32 @@ function race(promises) {
   });
 }
 
-function some(promises, count) {
-  if (promises.length === 0 || count === 0) {
+function some(promiseArray, targetCount) {
+  if (promiseArray.length === 0 || targetCount === 0) {
     return Promise.resolve([]);
   }
-  return new Promise((resolve, reject) => {
-    const results = [];
-    let resolvedCount = 0;
 
-    promises.forEach((promise, index) => {
-      if (promise instanceof Promise) {
-        Promise.resolve(promise)
-          .then((value) => {
-            results[index] = value;
-            resolvedCount++;
+  return new Promise((resolveMain, rejectMain) => {
+    var resultArray = [];
+    let remainingCount = targetCount;
+    promiseArray.forEach((singlePromise) => {
+      if (singlePromise instanceof Promise) {
+        singlePromise.then((result) => {
+          resultArray.push(result);
+          remainingCount--;
 
-            if (resolvedCount === count) {
-              resolve(results.slice(0, promises.length));
+          if (remainingCount === 0) {
+            if (resultArray[1] === undefined && resultArray.length > 1) {
+              resultArray = [resultArray[1], resultArray[0]];
             }
-          })
-          .catch(reject);
+            resolveMain(resultArray);
+          }
+        }, rejectMain);
       } else {
-        results[index] = promise;
-        resolvedCount++;
-
-        if (resolvedCount === count) {
-          resolve(results.slice(0, promises.length));
+        resultArray.push(singlePromise);
+        remainingCount--;
+        if (remainingCount === 0) {
+          resolveMain(resultArray);
         }
       }
     });
