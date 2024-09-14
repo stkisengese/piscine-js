@@ -12,8 +12,7 @@ function race(promises) {
 
 function some(promises, count) {
   if (promises.length === 0 || count === 0) {
-    Promise.resolve([]);
-    return;
+    return Promise.resolve([]);
   }
   return new Promise((resolve) => {
     const results = [];
