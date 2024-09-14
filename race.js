@@ -11,12 +11,11 @@ function race(promises) {
 }
 
 function some(promises, count) {
+  if (promises.length === 0 || count === 0) {
+    Promise.resolve([]);
+    return;
+  }
   return new Promise((resolve) => {
-    if (promises.length === 0 || count === 0) {
-      resolve([]);
-      return;
-    }
-
     const results = [];
     let resolvedCount = 0;
 
@@ -30,11 +29,7 @@ function some(promises, count) {
             resolve(results.slice(0, promises.length));
           }
         })
-        .catch(() => {
-          if (resolvedCount === count) {
-            resolve(results.slice(0, promises.length));
-          }
-        });
+        .catch(() => {});
     });
   });
 }
