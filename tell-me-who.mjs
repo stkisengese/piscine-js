@@ -1,55 +1,56 @@
 #!/usr/bin/env node
 
-import { readdir, readFile } from "fs";
+import { readdir } from "fs";
 import { promisify } from "util";
-import { resolve, join } from "path";
+import { format, resolve } from "path";
 
 const readdirAsync = promisify(readdir);
-const readFileAsync = promisify(readFile);
 
-async function readGuestName(directoryPath, filename) {
-  const filePath = join(directoryPath, filename);
-  const content = await readFileAsync(filePath, "utf-8");
-  const [lastname, firstname] = content.trim().split("_");
-  return { lastname, firstname };
-}
-
-async function getGuestList(directoryPath) {
-  const files = await readdirAsync(directoryPath);
-  const guestPromises = files.map((file) => readGuestName(directoryPath, file));
-  const guests = await Promise.all(guestPromises);
-
-  return guests.sort((a, b) => {
-    if (a.lastname === b.lastname) {
-      return a.firstname.localeCompare(b.firstname);
-    }
-    return a.lastname.localeCompare(b.lastname);
-  });
-}
-
-function formatGuestList(guests) {
-  return guests
-    .map((guest, index) => {
-      return `${index + 1}. ${guest.lastname} ${guest.firstname}`;
+function parseAndFormatNames(files) {
+  return files
+    .filter((file) => file.includes("_") && file.endsWith(".json"))
+    .map((file) => {
+      const [lastname, firstname] = file.split("_");
+      return `${firstname.slice(0, -5)} ${lastname}`;
     })
-    .join("\n");
+    .sort((a, b) => a.localeCompare(b));
 }
 
-async function main() {
-  const directoryPath = process.argv[2] || ".";
-  const resolvedPath = resolve(directoryPath);
-
+async function listGuests(directoryPath) {
   try {
-    const guests = await getGuestList(resolvedPath);
-    const formattedList = formatGuestList(guests);
-    console.log(formattedList);
+    const files = await readdirAsync(directoryPath);
+    const formattedNames = parseAndFormatNames(files);
+
+    if (formattedNames.length === 0) return;
+
+    formattedNames.forEach((name, index) => {
+      console.log(`${index + 1}. ${name}`);
+    });
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`Error reading directory: ${error.message}`);
     process.exit(1);
   }
 }
 
-main().catch((error) => {
-  console.error(`Unexpected error: ${error.message}`);
-  process.exit(1);
-});
+function main() {
+  const filePath = process.argv[2] || ".";
+  const resolvedPath = resolve(filePath);
+  listGuests(resolvedPath);
+}
+
+main();
+
+function split(arr) {
+  let result = [];
+  for (let file of arr) {
+    let store = file.split("_");
+    store[1] = store[1].slice(0, -5);
+    let conc = store[1] + " " + store[0];
+    result.push(conc);
+  }
+  return result;
+}
+
+console.log(split(["Dotty_Dunlap.json"]));
+let path = process.cwd();
+// console.log(path);
