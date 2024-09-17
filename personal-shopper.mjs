@@ -80,11 +80,11 @@ async function removeItem() {
   let list = await readList();
 
   if (!(item in list)) {
-    return; // No action needed if the item does not exist
+    return; // Item does not exist, no action needed
   }
 
   if (!quantity) {
-    // If no quantity provided, remove the item
+    // If no quantity is provided, remove the item
     delete list[item];
   } else {
     let count = Number(quantity);
@@ -95,13 +95,11 @@ async function removeItem() {
     }
 
     if (count < 0) {
-      // If count is negative, add the absolute value to the list
-      list[item] = (list[item] || 0) - count; // subtracting a negative means adding
-      if (list[item] <= 0) {
-        delete list[item];
-      }
+      // If count is negative, treat it as an addition
+      count = -count; // Make count positive
+      list[item] = (list[item] || 0) + count; // Add the positive count
     } else {
-      // Normal removal
+      // If count is positive, subtract it
       list[item] -= count;
       if (list[item] <= 0) {
         delete list[item];
