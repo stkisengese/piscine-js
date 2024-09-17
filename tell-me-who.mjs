@@ -40,17 +40,17 @@ function main() {
 
 main();
 
-function split(arr) {
-  let result = [];
-  for (let file of arr) {
-    let store = file.split("_");
-    store[1] = store[1].slice(0, -5);
-    let conc = store[1] + " " + store[0];
-    result.push(conc);
-  }
-  return result;
-}
+// function split(arr) {
+//   let result = [];
+//   for (let file of arr) {
+//     let store = file.split("_");
+//     store[1] = store[1].slice(0, -5);
+//     let conc = store[1] + " " + store[0];
+//     result.push(conc);
+//   }
+//   return result;
+// }
 
-console.log(split(["Dotty_Dunlap.json"]));
-let path = process.cwd();
-// console.log(path);
+// console.log(split(["Dotty_Dunlap.json"]));
+// let path = process.cwd();
+// // console.log(path);
