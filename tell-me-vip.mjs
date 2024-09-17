@@ -52,14 +52,14 @@ function formatGuestList(guests) {
 async function main() {
   const directoryPath = process.argv[2] || ".";
   const resolvedPath = resolve(directoryPath);
-  const outputPath = join(resolvedPath, "vip.txt");
+ // const outputPath = join(resolvedPath, "vip.txt");
 
   try {
     const vipGuests = await getVIPGuests(resolvedPath);
     const formattedList = formatGuestList(vipGuests);
 
-    await writeFileAsync(outputPath, formattedList);
-    console.log(`VIP list has been saved to ${outputPath}`);
+    await writeFileAsync('vip.txt', formattedList);
+    console.log(`VIP list has been saved to vip.txt`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
