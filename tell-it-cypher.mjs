@@ -1,15 +1,13 @@
 #!/usr/bin/env node
-
 import { readFile, writeFile } from "fs";
 import { promisify } from "util";
-// import { join, extname } from 'node:path';
 
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
 async function readInputFile(filePath) {
   try {
-    return await readFileAsync(filePath);
+    return await readFileAsync(filePath, "utf8");
   } catch (error) {
     console.error(`Error reading file: ${error.message}`);
     process.exit(1);
@@ -26,12 +24,12 @@ async function writeOutputFile(content, fileName) {
   }
 }
 
-function encodeBase64(buffer) {
-  return buffer.toString("base64");
+function encodeBase64(input) {
+  return Buffer.from(input).toString("base64");
 }
 
 function decodeBase64(base64String) {
-  return Buffer.from(base64String, "base64");
+  return Buffer.from(base64String, "base64").toString("utf8");
 }
 
 async function main() {
@@ -44,16 +42,15 @@ async function main() {
     process.exit(1);
   }
 
-  const buffer = await readInputFile(inputFile);
-
+  const input = await readInputFile(inputFile);
   let result;
   let defaultOutputFile;
 
   if (action.toLowerCase() === "encode") {
-    result = encodeBase64(buffer);
+    result = encodeBase64(input);
     defaultOutputFile = "cypher.txt";
   } else if (action.toLowerCase() === "decode") {
-    result = decodeBase64(buffer);
+    result = decodeBase64(input);
     defaultOutputFile = "clear.txt";
   } else {
     console.error('Invalid action. Use "encode" or "decode".');
@@ -61,8 +58,10 @@ async function main() {
   }
 
   const finalOutputFile = outputFile || defaultOutputFile;
-
   await writeOutputFile(result, finalOutputFile);
+
+  // Print the result to stdout
+  console.log(result);
 }
 
 main().catch((error) => {
