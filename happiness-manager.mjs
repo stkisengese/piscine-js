@@ -1,87 +1,120 @@
 #!/usr/bin/env node
+"use strict";
 
 import { readdir, readFile, writeFile } from "fs/promises";
+import { existsSync } from "fs";
 import { join } from "path";
 
-const [, , guestDir, outputFile] = process.argv;
+const guestDir = process.argv[2] ?? "./guests";
+const shoppingListFile = process.argv[3] ?? "shopping-list.json";
+
+let drinkPreferences = {
+  beer: 0,
+  wine: 0,
+  water: 0,
+  soft: 0,
+};
+
+let foodPreferences = {
+  eggplants: 0,
+  mushrooms: 0,
+  hummus: 0,
+  courgettes: 0,
+  burgers: 0,
+  sardines: 0,
+  kebabs: 0,
+  potatoes: 0,
+};
+
+let totalGuests = 0;
+
+function processGuest(guestData) {
+  if (guestData.answer === "yes") {
+    totalGuests++;
+    foodPreferences.potatoes++;
+    if (guestData.drink) {
+      drinkPreferences[guestData.drink]++;
+    }
+    switch (guestData.food) {
+      case "veggie":
+      case "vegan":
+        foodPreferences.mushrooms += 3;
+        foodPreferences.eggplants++;
+        foodPreferences.hummus++;
+        foodPreferences.courgettes++;
+        break;
+      case "carnivore":
+        foodPreferences.burgers++;
+        break;
+      case "fish":
+        foodPreferences.sardines++;
+        break;
+      case "everything":
+        foodPreferences.kebabs++;
+        break;
+    }
+  }
+}
 
 async function main() {
-  try {
-    const guests = await getGuestInfo(guestDir);
-    const vipGuests = guests.filter((guest) => guest.answer === "yes");
+  let shoppingList = {};
+  if (existsSync(shoppingListFile)) {
+    shoppingList = await readFile(shoppingListFile)
+      .then((content) => (content.length > 0 ? JSON.parse(content) : {}))
+      .catch((err) => {
+        console.error(
+          new Error(
+            `Failed to parse shopping list in ${shoppingListFile}: ${err}\nA new list will be created.`
+          )
+        );
+        return {};
+      });
+  }
 
-    if (vipGuests.length === 0) {
-      console.log("No one is coming.");
-      process.exit(0);
+  const guestFiles = (await readdir(guestDir)).filter((file) =>
+    file.endsWith(".json")
+  );
+  const guestPromises = guestFiles.map((fileName) =>
+    readFile(join(guestDir, fileName))
+      .then((content) => JSON.parse(content))
+      .then(processGuest)
+  );
+
+  await Promise.all(guestPromises);
+
+  if (!totalGuests) {
+    console.log("No one is coming.");
+    process.exit(0);
+  }
+
+  if (drinkPreferences.beer) {
+    shoppingList["6-packs-beers"] = Math.ceil(drinkPreferences.beer / 6);
+  }
+
+  for (let beverage of ["water", "wine", "soft"]) {
+    if (drinkPreferences[beverage]) {
+      shoppingList[`${beverage}-bottles`] = Math.ceil(
+        drinkPreferences[beverage] / 4
+      );
     }
-
-    const shoppingList = calculateShoppingList(vipGuests);
-    await updateShoppingListFile(outputFile, shoppingList);
-  } catch (error) {
-    console.error("An error occurred:", error.message);
-    process.exit(1);
-  }
-}
-
-async function getGuestInfo(dir) {
-  const files = await readdir(dir);
-  const guestInfo = await Promise.all(
-    files.map(async (file) => {
-      const content = await readFile(join(dir, file), "utf-8");
-      return JSON.parse(content);
-    })
-  );
-  return guestInfo;
-}
-
-function calculateShoppingList(guests) {
-  const drinks = guests.map((guest) => guest.drink).filter(Boolean);
-  const food = guests.map((guest) => guest.food).filter(Boolean);
-
-  const beerDrinkers = drinks.filter((drink) => drink === "beer").length;
-  const wineDrinkers = drinks.filter((drink) => drink === "wine").length;
-  const waterDrinkers = drinks.filter((drink) => drink === "water").length;
-  const softDrinkers = drinks.filter((drink) => drink === "soft").length;
-
-  const veggiesAndVegans = food.filter((f) =>
-    ["veggies", "vegan"].includes(f)
-  ).length;
-  const carnivores = food.filter((f) => f === "carnivore").length;
-  const fishLovers = food.filter((f) => f === "fish").length;
-  const omnivores = food.filter((f) => f === "all").length;
-
-  const shoppingList = {
-    "6-packs-beers": Math.ceil(beerDrinkers / 6),
-    "wine-bottles": Math.ceil(wineDrinkers / 4),
-    "water-bottles": Math.ceil(waterDrinkers / 4),
-    "soft-bottles": Math.ceil(softDrinkers / 4),
-    eggplants: Math.ceil(veggiesAndVegans / 3),
-    courgettes: Math.ceil(veggiesAndVegans / 3),
-    mushrooms: Math.ceil(veggiesAndVegans / 3) * 3,
-    hummus: Math.ceil(veggiesAndVegans / 3),
-    burgers: carnivores,
-    sardines: fishLovers,
-    kebabs: omnivores,
-    potatoes: guests.length,
-  };
-
-  // Remove items with zero quantity
-  return Object.fromEntries(
-    Object.entries(shoppingList).filter(([, value]) => value > 0)
-  );
-}
-
-async function updateShoppingListFile(fileName, newList) {
-  let existingList = {};
-  try {
-    const fileContent = await readFile(fileName, "utf-8");
-    existingList = JSON.parse(fileContent);
-  } catch (error) {
-    // File doesn't exist or is empty, start with an empty object
   }
 
-  const updatedList = { ...existingList, ...newList };
-  await writeFile(fileName, JSON.stringify(updatedList, null, 2));
+  for (let veggie of ["eggplants", "mushrooms", "hummus", "courgettes"]) {
+    if (foodPreferences[veggie]) {
+      shoppingList[veggie] = Math.ceil(foodPreferences[veggie] / 3);
+    }
+  }
+
+  for (let meat of ["burgers", "sardines", "kebabs", "potatoes"]) {
+    if (foodPreferences[meat]) {
+      shoppingList[meat] = Math.ceil(foodPreferences[meat]);
+    }
+  }
+
+  await writeFile(shoppingListFile, JSON.stringify(shoppingList, null, 2));
 }
 
-main();
+main().catch((error) => {
+  console.error("An error occurred:", error);
+  process.exit(1);
+});
