@@ -1,41 +1,51 @@
-import { error } from "console";
-import { readdir } from "fs";
+#!/usr/bin/env node
+
+import { readdir, readFile } from "fs";
 import { promisify } from "util";
 import { resolve, join } from "path";
 
 const readdirAsync = promisify(readdir);
+const readFileAsync = promisify(readFile);
 
-async function getGuestNames(directoryPath) {
-  try {
-    const files = await readdirAsync(directoryPath);
-    const guests = files.map((file) => {
-      const [firstName, lastName] = file.split(" ");
-      return { firstName, lastName };
-    });
-
-    guests.sort((a, b) => {
-      if (a.lastName < b.lastName) return -1;
-      if (a.lastName > b.lastName) return 1;
-      if (a.firstName < b.firstName) return -1;
-      if (a.firstName > b.firstName) return 1;
-      return 0;
-    });
-
-    guests.forEach((guest, index) => {
-      console.log(`${index + 1}. ${guest.lastName} ${guest.firstName}`);
-    });
-  } catch (error) {
-    console.error("Error reading directory:", error);
-  }
+async function readGuestName(directoryPath, filename) {
+  const filePath = join(directoryPath, filename);
+  const content = await readFileAsync(filePath, "utf-8");
+  const [lastname, firstname] = content.trim().split("_");
+  return { lastname, firstname };
 }
+
+async function getGuestList(directoryPath) {
+  const files = await readdirAsync(directoryPath);
+  const guestPromises = files.map((file) => readGuestName(directoryPath, file));
+  const guests = await Promise.all(guestPromises);
+
+  return guests.sort((a, b) => {
+    if (a.lastname === b.lastname) {
+      return a.firstname.localeCompare(b.firstname);
+    }
+    return a.lastname.localeCompare(b.lastname);
+  });
+}
+
+function formatGuestList(guests) {
+  return guests
+    .map((guest, index) => {
+      return `${index + 1}. ${guest.lastname} ${guest.firstname}`;
+    })
+    .join("\n");
+}
+
 async function main() {
   const directoryPath = process.argv[2] || ".";
   const resolvedPath = resolve(directoryPath);
 
-  if (resolvedPath) {
-    getGuestNames(resolvedPath);
-  } else {
-    console.error("Please provide a directory path as an argument.");
+  try {
+    const guests = await getGuestList(resolvedPath);
+    const formattedList = formatGuestList(guests);
+    console.log(formattedList);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1);
   }
 }
 
