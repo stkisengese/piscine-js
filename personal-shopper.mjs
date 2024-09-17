@@ -95,15 +95,17 @@ async function removeItem() {
     }
 
     if (count < 0) {
-      // If count is negative, handle like add command
-      await addItem(); // Call addItem with negative quantity
-      return;
-    }
-
-    list[item] -= count;
-
-    if (list[item] <= 0) {
-      delete list[item];
+      // If count is negative, add the absolute value to the list
+      list[item] = (list[item] || 0) - count; // subtracting a negative means adding
+      if (list[item] <= 0) {
+        delete list[item];
+      }
+    } else {
+      // Normal removal
+      list[item] -= count;
+      if (list[item] <= 0) {
+        delete list[item];
+      }
     }
   }
 
