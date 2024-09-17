@@ -78,29 +78,19 @@ async function removeItem() {
   }
 
   let list = await readList();
-
-  if (!(item in list)) {
-    return; // Item does not exist, no action needed
-  }
+  let count = Number(quantity);
 
   if (!quantity) {
-    // If no quantity is provided, remove the item
     delete list[item];
+  } else if (isNaN(count)) {
+    console.error("Unexpected request: nothing has been removed");
+    return;
   } else {
-    let count = Number(quantity);
-
-    if (isNaN(count)) {
-      console.error("Unexpected request: nothing has been removed");
-      return;
-    }
-
     if (count < 0) {
-      // If count is negative, treat it as an addition
-      count = -count; // Make count positive
-      list[item] = (list[item] || 0) + count; // Add the positive count
+      // If count is negative, add instead of remove
+      list[item] = (list[item] || 0) - count;
     } else {
-      // If count is positive, subtract it
-      list[item] -= count;
+      list[item] = (list[item] || 0) - count;
       if (list[item] <= 0) {
         delete list[item];
       }
