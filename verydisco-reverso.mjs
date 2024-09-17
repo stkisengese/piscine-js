@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
-import { promisify } from 'util';
 
-
-// Promisify fs.readFile
-const readFileAsync = promisify(fs.readFile);
 /**
  * Reverses the "very disco" transformation on a word.
  * @param {string} word - The word to transform back.
@@ -29,7 +25,7 @@ function processInput(input) {
 /**
  * Main function to handle the script execution.
  */
-async function main() {
+function main() {
     const args = process.argv.slice(2);
     if (args.length === 0) {
         console.error('Error: Please provide the name of a file.');
@@ -39,7 +35,7 @@ async function main() {
     const filename = path.join(process.cwd(), args[0]);
 
     try {
-        const data = await readFileAsync(filename, 'utf8');
+        const data = readFileSync(filename, 'utf8');
         const result = processInput(data);
         console.log(result);
     } catch (error) {
@@ -47,4 +43,4 @@ async function main() {
     }
 }
 
-main().catch(error => console.error(error));
+main();
