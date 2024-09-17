@@ -80,18 +80,28 @@ async function removeItem() {
   let list = await readList();
 
   if (!(item in list)) {
-    return;
+    return; // No action needed if the item does not exist
   }
 
   if (!quantity) {
+    // If no quantity provided, remove the item
     delete list[item];
   } else {
     let count = Number(quantity);
+
     if (isNaN(count)) {
       console.error("Unexpected request: nothing has been removed");
       return;
     }
+
+    if (count < 0) {
+      // If count is negative, handle like add command
+      await addItem(); // Call addItem with negative quantity
+      return;
+    }
+
     list[item] -= count;
+
     if (list[item] <= 0) {
       delete list[item];
     }
