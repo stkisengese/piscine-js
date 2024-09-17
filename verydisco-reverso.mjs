@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-import fs from 'fs/promises';
-import path from 'path';
+import {readFile} from 'fs';
+// import path from 'path';
+import { promisify } from 'util';
 
+
+// Promisify fs.readFile
+const readFileAsync = promisify(readFile);
 /**
  * Reverses the "very disco" transformation on a word.
  * @param {string} word - The word to transform back.
@@ -32,10 +36,10 @@ async function main() {
         process.exit(1);
     }
 
-    const filename = path.join(process.cwd(), args[0]);
+    const filename = process.argv[2];
 
     try {
-        const data = await fs.readFile(filename, 'utf8');
+        const data = await readFileAsync(filename, 'utf8');
         const result = processInput(data);
         console.log(result);
     } catch (error) {
