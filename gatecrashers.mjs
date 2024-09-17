@@ -1,11 +1,11 @@
 import { createServer } from "http";
-import { readFile, writeFile } from "fs";
+import { writeFile } from "fs";
 import { promisify } from "util";
 import { join } from "path";
 import { Buffer } from "buffer";
 
 const PORT = 5000;
-const readFileAsync = promisify(readFile);
+// const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 const AUTH_USERS = {
   Caleb_Squires: "abracadabra",
@@ -14,24 +14,7 @@ const AUTH_USERS = {
 };
 
 const server = createServer(async (req, res) => {
-  if (req.method === "GET") {
-    const guestName = req.url.slice(1); // Remove the leading '/'
-    const filePath = join("guests", `${guestName}.json`);
-
-    try {
-      const data = await readFileAsync(filePath, "utf8");
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(data);
-    } catch (error) {
-      if (error.code === "ENOENT") {
-        res.writeHead(404, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: "guest not found" }));
-      } else {
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: "server failed" }));
-      }
-    }
-  } else if (req.method === "POST") {
+  if (req.method === "POST") {
     const authHeader = req.headers["authorization"];
     if (!authHeader || !isValidUser(authHeader)) {
       res.writeHead(401, { "Content-Type": "application/json" });
@@ -49,23 +32,32 @@ const server = createServer(async (req, res) => {
 
     req.on("end", async () => {
       try {
-        await writeFileAsync(filePath, body, "utf8");
+        // Parse the body to ensure it's valid JSON
+        const jsonBody = JSON.parse(body);
+
+        // Write the file
+        await writeFileAsync(filePath, JSON.stringify(jsonBody, null, 2), "utf8");
+
         res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(body);
+        res.end(JSON.stringify(jsonBody));
       } catch (error) {
         res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: "server failed" }));
+        res.end(JSON.stringify({ error: "Server failed" }));
       }
     });
   } else {
     res.writeHead(405, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "method not allowed" }));
+    res.end(JSON.stringify({ error: "Method not allowed" }));
   }
 });
 
 function isValidUser(authHeader) {
-  const base64Credentials = authHeader.split(" ")[1];
-  const credentials = Buffer.from(base64Credentials, "base64").toString("utf8");
+  const [authType, encodedCredentials] = authHeader.split(" ");
+  if (authType !== "Basic") return false;
+
+  const credentials = Buffer.from(encodedCredentials, "base64").toString(
+    "utf8"
+  );
   const [username, password] = credentials.split(":");
 
   return AUTH_USERS[username] === password;
