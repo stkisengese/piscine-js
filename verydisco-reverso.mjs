@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 /**
@@ -25,7 +25,7 @@ function processInput(input) {
 /**
  * Main function to handle the script execution.
  */
-function main() {
+async function main() {
     const args = process.argv.slice(2);
     if (args.length === 0) {
         console.error('Error: Please provide the name of a file.');
@@ -35,7 +35,7 @@ function main() {
     const filename = path.join(process.cwd(), args[0]);
 
     try {
-        const data = readFileSync(filename, 'utf8');
+        const data = await fs.readFile(filename, 'utf8');
         const result = processInput(data);
         console.log(result);
     } catch (error) {
@@ -43,4 +43,4 @@ function main() {
     }
 }
 
-main();
+main().catch(error => console.error(error));
