@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, writeFile, stat } from "fs/promises";
+import { readdir, readFile, writeFile } from "fs/promises";
 import { join } from "path";
 
 const [, , guestDir, outputFile] = process.argv;
@@ -35,8 +35,8 @@ async function getGuestInfo(dir) {
 }
 
 function calculateShoppingList(guests) {
-  const drinks = guests.map((guest) => guest.drink);
-  const food = guests.flatMap((guest) => guest.food || []);
+  const drinks = guests.map((guest) => guest.drink).filter(Boolean);
+  const food = guests.map((guest) => guest.food).filter(Boolean);
 
   const beerDrinkers = drinks.filter((drink) => drink === "beer").length;
   const wineDrinkers = drinks.filter((drink) => drink === "wine").length;
@@ -46,7 +46,7 @@ function calculateShoppingList(guests) {
   const veggiesAndVegans = food.filter((f) =>
     ["veggies", "vegan"].includes(f)
   ).length;
-  const carnivores = food.filter((f) => f === "meat").length;
+  const carnivores = food.filter((f) => f === "carnivore").length;
   const fishLovers = food.filter((f) => f === "fish").length;
   const omnivores = food.filter((f) => f === "all").length;
 
