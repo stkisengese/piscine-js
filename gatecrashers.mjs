@@ -50,7 +50,7 @@ const server = createServer(async (req, res) => {
     req.on("end", async () => {
       try {
         await writeFileAsync(filePath, body, "utf8");
-        res.writeHead(201, { "Content-Type": "application/json" });
+        res.writeHead(200, { "Content-Type": "application/json" });
         res.end(body);
       } catch (error) {
         res.writeHead(500, { "Content-Type": "application/json" });
@@ -65,9 +65,7 @@ const server = createServer(async (req, res) => {
 
 function isValidUser(authHeader) {
   const base64Credentials = authHeader.split(" ")[1];
-  const credentials = Buffer.from(base64Credentials, "base64").toString(
-    "ascii"
-  );
+  const credentials = Buffer.from(base64Credentials, "base64").toString("utf8");
   const [username, password] = credentials.split(":");
 
   return AUTH_USERS[username] === password;
